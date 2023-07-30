@@ -1,6 +1,6 @@
 <?php
 require_once 'conexao.php';
-require_once 'validaCPF.php';
+require_once 'validadores.php';
 session_start();
 $userLogin = $_POST["login"];
     $senha = $_POST["senha"];
@@ -51,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION["user_nome"] = $row["nome"];
         $_SESSION["user_cpf"] = $userLogin;
         $_SESSION["user_role"] = "funcionario";
-        header("Location: painelFuncionario.php");
+        header("Location: funcionario/painelFuncionario.php");
         exit;
     } else {
         $mensagem_erro = "Credenciais inválidas. Tente novamente.";

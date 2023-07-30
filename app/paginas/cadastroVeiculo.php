@@ -40,17 +40,17 @@
             echo "<option value='$letra'>$letra</option>";
         }
         echo '</select>';
-
-        echo '<select name="placa_letra[]" required>';
-        for ($i = 65; $i <= 90; $i++) {
-            $letra = chr($i);
-            echo "<option value='$letra'>$letra</option>";
-        }
-        echo '</select>';
-
+        
         echo '<select name="placa_numero[]" required>';
         for ($i = 0; $i <= 9; $i++) {
             echo "<option value='$i'>$i</option>";
+        }
+        echo '</select>';
+
+         echo '<select name="placa_letra[]" required>';
+        for ($i = 65; $i <= 90; $i++) {
+            $letra = chr($i);
+            echo "<option value='$letra'>$letra</option>";
         }
         echo '</select>';
 

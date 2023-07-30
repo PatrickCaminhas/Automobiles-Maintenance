@@ -2,9 +2,6 @@
 require_once 'conexao.php';
 session_start();
 
-$marca = '';
-$modelo = '';
-$ano = '';
 
 // Verifica se o formulário foi enviado (após a alteração)
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

@@ -25,7 +25,14 @@ $conn->close();
 <body>
     <h2>Bem-vindo, <?php echo $user_nome; ?>!</h2>
     <p>Esta é a página do painel do usuário proprietário.</p>
-    <h3>Lista de Veículos</h3>
+    <?php
+    // Verifique se o usuário possui veículos cadastrados
+    if ($resultado_veiculos->num_rows == 0) {
+        echo "<p>Você ainda não possui veículos cadastrados.</p>";
+    } else{
+    ?>
+    <h3>Seus veículos</h3>
+    
     <table>
         <tr>
             <th>Placa</th>
@@ -54,9 +61,15 @@ $conn->close();
         }
         ?>
     </table>
-    <a href="cadastroVeiculo.php">Cadastrar veiculo</a> <br>
+    
     <a href="agendamentoManutencao.php">Agendar entrega para manutenção</a> <br>
+    <a href="cancelamentoDeAgendamento.php">Cancelar agendamento de entrega</a> <br>
+    <?php
+    }
+    ?>
+    <a href="cadastroVeiculo.php">Cadastrar veiculo</a> <br>
     <a href="alteracaoVeiculo.php">Alterar veiculo</a> <br>
-    <a href="logout.php">Sair</a>
+    <a href="excluirVeiculo.php">Excluir veiculo</a> <br>
+    <a href="logout.php">Logout</a>
 </body>
 </html>
