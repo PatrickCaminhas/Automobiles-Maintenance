@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'funcionario') {
     exit;
 }
 
-require_once '../conexao.php';
+require_once '../funcoes/conexao.php';
 
 // Função para obter a lista de veículos com estados diferentes de "Com proprietário" e "Disponível para retirada"
 function obterListaVeiculos()
@@ -19,7 +19,7 @@ function obterListaVeiculos()
 FROM veiculos v
 INNER JOIN proprietarios p ON v.proprietario_id = p.id
 LEFT JOIN manutencoes m ON v.placa = m.placa
-WHERE v.estado_do_veiculo NOT IN ('Com proprietario', 'Disponivel para retirada');
+WHERE v.estado_do_veiculo NOT IN ('Com proprietario', 'Manutencao concluida');
 ";
     $resultado = $conn->query($sql);
     $listaVeiculos = array();

@@ -25,7 +25,7 @@ session_start();
         else{
         
     ?>
-    <form action="cancelarAgendamento.php" method="post">
+    <form action="manutencoes.php?funcao=cancelarAgendamento" method="post">
         <label for="placa">Placa do Veículo:</label>
         <select id="placa" name="placa" required>
             <option value="" data-default disabled selected></option>

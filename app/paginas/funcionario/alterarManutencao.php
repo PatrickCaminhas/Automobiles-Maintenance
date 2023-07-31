@@ -1,20 +1,23 @@
 <?php
 session_start();
 
+
+
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'funcionario') {
     header("Location: ../index.php");
     exit;
 }
 
-require_once '../conexao.php';
+require_once '../funcoes/conexao.php';
+
 
 $conn = conectarBancoDados();
 
-function atualizarManutencao($conn, $placa, $estado, $previsaoTermino, $tipo_servico, $custo)
+function atualizarManutencao($conn, $placa, $estado, $previsaoTermino, $tipo_servico,$observacoes, $custo)
 {
     $dataManutencao = date("Y-m-d");
 
-    $sql = "UPDATE manutencoes SET estado_do_veiculo = '$estado', data_manutencao = '$dataManutencao', previsaoTermino = '$previsaoTermino', tipo_servico = '$tipo_servico', custo = '$custo' WHERE placa = '$placa'";
+    $sql = "UPDATE manutencoes SET estado_do_veiculo = '$estado', data_manutencao = '$dataManutencao', observacoes = '$observacoes',  previsaoTermino = '$previsaoTermino', tipo_servico = '$tipo_servico', custo = '$custo' WHERE placa = '$placa' AND data_manutencao = (SELECT MAX(data_manutencao) FROM manutencoes WHERE placa = '$placa')";
     $sqlveiculo = "UPDATE veiculos SET estado_do_veiculo = '$estado' WHERE placa = '$placa'";
     $conn->query($sql); // Executar a consulta de atualização
     $conn->query($sqlveiculo);
@@ -30,8 +33,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $previsaoTermino = $_POST['data_final'];
         $tipo_servico = $_POST['tipo_servico'];
         $custo = $_POST['custo'];
+        $observacoes = $_POST['observacoes'];
 
-        atualizarManutencao($conn, $placa, $estado, $previsaoTermino, $tipo_servico, $custo);
+        atualizarManutencao($conn, $placa, $estado, $previsaoTermino, $tipo_servico, $observacoes, $custo);
     }
 }
 ?>

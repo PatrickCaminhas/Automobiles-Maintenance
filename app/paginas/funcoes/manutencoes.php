@@ -29,7 +29,7 @@ session_start();
             $conn->close();
 
             echo "Manutenção agendada com sucesso!";
-            header("Location: painel.php");
+            header("Location: ../cliente/painel.php");
         }
     }
 
@@ -60,8 +60,10 @@ session_start();
                 $sql_atualizar_estado = "UPDATE veiculos SET estado_do_veiculo = 'Com proprietário' WHERE placa = '$placa'";
                 $conn->query($sql_atualizar_estado);
                 echo "Agendamento cancelado com sucesso!";
+                header("Location: ../cliente/painel.php");
             } else {
                 echo "Não foi encontrado nenhum agendamento para o veículo.";
+                header("Location: ../cliente/painel.php");
             }
         
             // Fechar a conexão com o banco de dados
@@ -88,6 +90,7 @@ if (isset($_GET["funcao"])) {
         default:
             // Função não encontrada
             echo "Função não encontrada.";
+            header("Location: ../cliente/painel.php");
     }
 }
 ?>

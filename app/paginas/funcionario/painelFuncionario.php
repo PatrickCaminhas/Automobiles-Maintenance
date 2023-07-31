@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once '../funcoes/conexao.php';
 
 // Verificar se o usuário está logado e se é um funcionário
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'funcionario') {

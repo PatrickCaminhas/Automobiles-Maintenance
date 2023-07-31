@@ -23,12 +23,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION["user_id"] = $row["id"];
         $_SESSION["user_nome"] = $row["nome"];
         $_SESSION["user_role"] = "proprietario";
-        header("Location: painel.php");
+        header("Location: ../cliente/painel.php");
         exit;
     } else {
-        $mensagem_erro = "Credenciais inválidas. Tente novamente.";
-        echo $mensagem_erro;
-        header("Location: index.php");
+        echo '<script>alert("Login ou senha inválidos. Tente novamente.");window.location.href = "../index.php";</script>';
+
     }
 }
 }
@@ -51,11 +50,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION["user_nome"] = $row["nome"];
         $_SESSION["user_cpf"] = $userLogin;
         $_SESSION["user_role"] = "funcionario";
-        header("Location: funcionario/painelFuncionario.php");
+        header("Location: ../funcionario/painelFuncionario.php");
         exit;
     } else {
-        $mensagem_erro = "Credenciais inválidas. Tente novamente.";
-        header("Location: index.php");
+        echo '<script>alert("Login ou senha inválidos. Tente novamente.");window.location.href = "../index.php";</script>';
+       
     }
 }
 }

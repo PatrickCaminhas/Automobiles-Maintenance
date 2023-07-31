@@ -1,15 +1,20 @@
 <?php
 session_start();
-        require_once 'conexao.php';
-        $conn = conectarBancoDados();
-        $user_id = $_SESSION['user_id'];
-        
-        ?>
+require_once '../funcoes/conexao.php';
+$conn = conectarBancoDados();
+if (!isset($_SESSION["user_id"]) || $_SESSION['user_role'] !== 'proprietario') {
+    header("Location: ../index.php");
+    exit;
+}
+$user_id = $_SESSION['user_id'];
+?>
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Alterar Informações do Veículo - Sistema de Acompanhamento</title>
 </head>
+
 <body>
     <h2>Alterar Informações do Veículo</h2>
 
@@ -45,12 +50,12 @@ session_start();
     <!-- Div para exibir as informações do veículo selecionado -->
     <div id="informacoes-veiculo">
         <?php if (isset($marca) && isset($modelo) && isset($ano)) { ?>
-            Informações do Veículo: 
+            Informações do Veículo:
         <?php } ?>
     </div>
 
     <!-- Formulário para alterar as informações do veículo -->
-    <form action="alterarVeiculo.php" method="post">
+    <form action="../funcoes/veiculo.php?funcao=alterarVeiculo" method="post">
         <!-- Os campos "marca", "modelo" e "ano" serão preenchidos automaticamente pelo JavaScript -->
         <label for="marca">Marca:</label>
         <input type="text" id="marca" name="marca" required><br>
@@ -82,7 +87,7 @@ session_start();
         const inputPlacaSelecionada = document.getElementById('placa-selecionada');
 
         // Adiciona o evento de mudança ao select
-        selectPlaca.addEventListener('change', function() {
+        selectPlaca.addEventListener('change', function () {
             // Obtém o índice da opção selecionada no select
             const indexSelecionado = selectPlaca.selectedIndex;
             // Obtém o texto da opção selecionada
@@ -94,11 +99,12 @@ session_start();
             divInformacoesVeiculo.textContent = 'Informações do Veículo: ' + informacoes[0] + ' | ' + informacoes[1] + ' | ' + informacoes[2] + ' | ' + informacoes[3];
 
             // Atualiza os campos do formulário de alteração com as informações do veículo selecionado
-         
+
 
             // Atualiza o valor do campo oculto com a placa selecionada
             inputPlacaSelecionada.value = informacoes[0];
         });
     </script>
 </body>
+
 </html>

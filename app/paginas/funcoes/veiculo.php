@@ -2,7 +2,7 @@
 require_once 'conexao.php';
 require_once 'validadores.php';
 require_once 'usuarioCliente.php';
-session_start();
+
 
 
 #function inserirVeiculo($conn, $id, $proprietario_id, $marca, $modelo, $ano, $placa, $estado_do_veiculo)
@@ -10,17 +10,12 @@ session_start();
 #    $sql = "INSERT INTO veiculos (id, proprietario_id, marca, modelo, ano, placa, estado_do_veiculo) VALUES ('$id', '$proprietario_id', '$marca', '$modelo', '$ano', '$placa', '$estado_do_veiculo')";
 #    $conn->query($sql);
 #}
-function inserirVeiculo($conn, $proprietario_id, $marca, $modelo, $ano, $placa, $estado_do_veiculo)
-{
+function inserirVeiculo($proprietario_id, $marca, $modelo, $ano){
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $marca = $_POST["marca"];
-    $modelo = $_POST["modelo"];
-    $ano = $_POST["ano"];
-    $placa_letras = $_POST["placa_letra"]; // Array com as letras da placa
-    $placa_numeros = $_POST["placa_numero"]; // Array com os números da placa
-    $placa = implode('', $placa_letras) . implode('', $placa_numeros); // Concatena as letras e os números
-    $proprietario_id = $_SESSION["user_id"]; // Obtém o ID do proprietário da sessão
-
+    
+    $placa = $_POST["placa_letra1"] . $_POST["placa_letra2"]. $_POST["placa_letra3"]. $_POST["placa_numero1"].$_POST["placa_letra4"] .$_POST["placa_numero2"].$_POST["placa_numero3"];
+    
+    
     // Realize a consulta para verificar se a placa já foi cadastrada
     $conn = conectarBancoDados();
     $sql_consulta = "SELECT * FROM veiculos WHERE placa = '$placa'";
@@ -28,19 +23,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($resultado_consulta->num_rows > 0) {
         $conn->close();
-        echo '<script>alert("Erro: Carro com a placa informada já está cadastrado!");</script>';
-        header("Location: cadastroVeiculo.php");
+        echo '<script>alert("Erro: Carro com a placa informada já está cadastrado!"); window.location.href = "../cliente/cadastroVeiculo.php";</script>';
+        echo "Erro ao cadastrar o veículo: " . $conn->error;
+
+       
     } else {
         // Realize o cadastro do novo veículo no banco de dados
         $sql_cadastro = "INSERT INTO veiculos (marca, modelo, ano, placa, proprietario_id, estado_do_veiculo) VALUES ('$marca', '$modelo', '$ano', '$placa', '$proprietario_id', 'Com proprietário')";
         if ($conn->query($sql_cadastro) === TRUE) {
             $conn->close();
-            echo '<script>alert("Cadastro concluído com sucesso!");</script>';
-            header("Location: painel.php");
+            echo '<script>alert("Cadastro concluído com sucesso!"); window.location.href = "../cliente/painel.php";</script>';
             exit;
         } else {
             echo "Erro ao cadastrar o veículo: " . $conn->error;
-            header("Location: cadastroVeiculo.php");
         }
 
         $conn->close();
@@ -54,8 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 #    $sql = "UPDATE veiculos SET id = '$id', proprietario_id = '$proprietario_id', marca = '$marca', modelo = '$modelo', ano = '$ano', placa = '$placa', estado_do_veiculo = '$estado_do_veiculo' WHERE id = '$id'";
 #    $conn->query($sql);
 #}
-function updateVeiculo($conn, $marca, $modelo, $ano, $placa)
-{
+function updateVeiculo( $marca, $modelo, $ano, $placa){
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $marca = $_POST["marca"];
     $modelo = $_POST["modelo"];
@@ -76,7 +70,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Caso encontre outro veículo com a mesma placa, mas mesmo ID (o mesmo veículo), permite atualizar as informações
             $sql_atualizar = "UPDATE veiculos SET marca = '$marca', modelo = '$modelo', ano = '$ano' WHERE placa = '$placa' AND proprietario_id = $user_id";
             if ($conn->query($sql_atualizar) === TRUE) {
-                echo "Informações do veículo atualizadas com sucesso!";
+                echo '<script>alert("Atualização do veiculo concluída com sucesso!"); window.location.href = "../cliente/painel.php";</script>';
+
             } else {
                 echo "Erro ao atualizar as informações do veículo: " . $conn->error;
             }
@@ -85,7 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Caso a placa não esteja duplicada, realiza a atualização das informações do veículo no banco de dados
         $sql_atualizar = "UPDATE veiculos SET marca = '$marca', modelo = '$modelo', ano = '$ano' WHERE placa = '$placa' AND proprietario_id = $user_id";
         if ($conn->query($sql_atualizar) === TRUE) {
-            echo "Informações do veículo atualizadas com sucesso!";
+            echo '<script>alert("Atualização do veiculo concluída com sucesso!"); window.location.href = "../cliente/painel.php";</script>';
         } else {
             echo "Erro ao atualizar as informações do veículo: " . $conn->error;
         }
@@ -97,8 +92,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 
-function deleteVeiculo($conn, $placa)
-{
+function deleteVeiculo( $placa){
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
     
@@ -111,7 +105,8 @@ function deleteVeiculo($conn, $placa)
         $conn->query($sql_veiculo);
         // Consultar a data de agendamento da manutenção
     
-    
+        echo '<script>alert("Exclusão do veiculo concluída com sucesso!"); window.location.href = "../cliente/painel.php";</script>';
+
         // Fechar a conexão com o banco de dados
         $conn->close();
     }
@@ -189,7 +184,26 @@ function selectVeiculoPorLogin($conn, $login)
 }
 
 
+if (isset($_GET["funcao"])) {
+    $funcao = $_GET["funcao"];
 
+    switch ($funcao) {
+        case "cadastrarVeiculo":
+            inserirVeiculo($_POST["proprietario_id"], $_POST["marca"], $_POST["modelo"], $_POST["ano"]);
+            break;
+        case "alterarVeiculo":
+            updateVeiculo($_POST["marca"], $_POST["modelo"], $_POST["ano"], $_POST["placa"]);
+            break;
+        case "excluirVeiculo":
+            deleteVeiculo($_POST["placa"]);
+            break;
+
+        // Adicione mais cases para outras funções
+        default:
+            // Função não encontrada
+            echo "Função não encontrada.";
+    }
+}
 
 
 ?>
