@@ -8,43 +8,23 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'funcionario') {
 }
 
 require_once '../funcoes/conexao.php';
-
+require_once '../funcoes/veiculo.php';
 // Função para obter a lista de veículos com estados diferentes de "Com proprietário" e "Disponível para retirada"
-function obterListaVeiculos()
-{
-    $conn = conectarBancoDados();
-    $sql = "SELECT p.nome as proprietario_nome, p.telefone as proprietario_telefone,
-    v.marca, v.modelo, v.ano, v.placa, v.estado_do_veiculo,
-    m.data_manutencao, m.previsaoTermino, m.tipo_servico, m.custo
-FROM veiculos v
-INNER JOIN proprietarios p ON v.proprietario_id = p.id
-LEFT JOIN manutencoes m ON v.placa = m.placa
-WHERE v.estado_do_veiculo NOT IN ('Com proprietario', 'Manutencao concluida');
-";
-    $resultado = $conn->query($sql);
-    $listaVeiculos = array();
 
-    if ($resultado->num_rows > 0) {
-        while ($row = $resultado->fetch_assoc()) {
-            $listaVeiculos[] = $row;
-        }
-    }
-
-    $conn->close();
-    return $listaVeiculos;
-}
 
 $listaVeiculos = obterListaVeiculos();
 ?>
 
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Alteração de Estados de Manutenção - Sistema de Acompanhamento</title>
 </head>
+
 <body>
     <h2>Alteração de manuteções</h2>
-    
+
     <table>
         <tr>
             <th>Proprietário</th>
@@ -59,33 +39,75 @@ $listaVeiculos = obterListaVeiculos();
             <th>Custo</th>
             <th>Estado</th>
             <th>Ação</th>
+            <th>Finalizar</th>
         </tr>
         <?php foreach ($listaVeiculos as $veiculo) { ?>
-            <tr><form action="atualizarManutencao.php" method="post">
-                <td><?php echo $veiculo['proprietario_nome']; ?></td>
-                <td><?php echo $veiculo['proprietario_telefone']; ?></td>
-                <td><?php echo $veiculo['marca']; ?></td>
-                <td><?php echo $veiculo['modelo']; ?></td>
-                <td><?php echo $veiculo['ano']; ?></td>
-                <td><?php echo $veiculo['placa']; ?>
-                <input type="hidden" name="placa" value="<?php echo $veiculo['placa']; ?>">
-                </td>
-                
-                
-                <td><?php echo $veiculo['data_manutencao']; ?></td>
-                <td><?php echo $veiculo['previsaoTermino']; ?></td>
-                <td><?php echo $veiculo['tipo_servico']; ?></td>
-                <td>R$ <?php echo $veiculo['custo']; ?></td>
-                <td><?php echo $veiculo['estado_do_veiculo']; ?></td>
-                <td><input type="submit" value="Alterar"> </td>
-                
+            <tr>
 
-            </form>    
+
+                <td>
+                    <?php echo $veiculo['proprietario_nome']; ?>
+                </td>
+                <td>
+                    <?php echo $veiculo['proprietario_telefone']; ?>
+                </td>
+                <td>
+                    <?php echo $veiculo['marca']; ?>
+                </td>
+                <td>
+                    <?php echo $veiculo['modelo']; ?>
+                </td>
+                <td>
+                    <?php echo $veiculo['ano']; ?>
+                </td>
+                <td>
+                    <?php echo $veiculo['placa']; ?>
+
+                </td>
+                <td>
+                    <?php echo $veiculo['data_manutencao']; ?>
+                </td>
+                <td>
+                    <?php echo $veiculo['previsaoTermino']; ?>
+                </td>
+                <td>
+                    <?php echo $veiculo['tipo_servico']; ?>
+                </td>
+                <td>R$
+                    <?php echo $veiculo['custo']; ?>
+                </td>
+                <td>
+                    <?php echo $veiculo['estado_manutencao']; ?>
+                </td>
+                <td>
+                    <form action="atualizarManutencao.php" method="post">
+                        <input type="hidden" name="placa" value="<?php echo $veiculo['placa']; ?>">
+                        <input type="submit" value="Alterar"<?php
+                           if ($veiculo['estado_manutencao'] == "Manutenção concluída") {
+                               echo "disabled";
+                           }
+                           ?>>
+                    </form>
+                </td>
+                <td>
+                    <form action="finalizarManutencao.php" method="post">
+                        <input type="hidden" name="placa" value="<?php echo $veiculo['placa']; ?>">
+                        <input type="submit" value="Finalizar" <?php
+                           if ($veiculo['estado_manutencao'] != "Manutenção concluída") {
+                               echo "disabled";
+                           }
+                           ?>>
+                    </form>
+                </td>
+
+
+
             </tr>
 
-        
+
         <?php } ?>
     </table>
-<button onclick="window.location.href = 'painelFuncionario.php';">Voltar</button>
+    <button onclick="window.location.href = 'painelFuncionario.php';">Voltar</button>
 </body>
+
 </html>

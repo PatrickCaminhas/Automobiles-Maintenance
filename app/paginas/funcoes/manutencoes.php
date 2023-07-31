@@ -1,6 +1,5 @@
 <?php
 require_once 'conexao.php';
-session_start();
 
      function agendarManutencao($placa, $data_manutencao)
     {
@@ -27,9 +26,8 @@ session_start();
 
 
             $conn->close();
+            echo '<script>alert("Manutenção agendada com sucesso!"); window.location.href = "../cliente/painel.php";</script>';
 
-            echo "Manutenção agendada com sucesso!";
-            header("Location: ../cliente/painel.php");
         }
     }
 
@@ -59,11 +57,9 @@ session_start();
                 $conn->query($sql_agendamento);
                 $sql_atualizar_estado = "UPDATE veiculos SET estado_do_veiculo = 'Com proprietário' WHERE placa = '$placa'";
                 $conn->query($sql_atualizar_estado);
-                echo "Agendamento cancelado com sucesso!";
-                header("Location: ../cliente/painel.php");
+                echo '<script>alert("Agendamento de manutenção cancelada!"); window.location.href = "../cliente/painel.php";</script>';
             } else {
-                echo "Não foi encontrado nenhum agendamento para o veículo.";
-                header("Location: ../cliente/painel.php");
+                echo '<script>alert("Não foi encontrado nenhum agendamento para o veículo."); window.location.href = "../cliente/painel.php";</script>';
             }
         
             // Fechar a conexão com o banco de dados
@@ -73,7 +69,44 @@ session_start();
     }
 
  
+    function finalizarManutencao($placa){
+       
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $placa = $_POST["placa"];
+        
+            // Realize o agendamento da manutenção no banco de dados
+            $conn = conectarBancoDados();
+        
+            // Atualizar o campo "estado_do_veiculo" na tabela "veiculos" para refletir que o veículo está com proprietário
+           
+        
+            // Consultar a data de agendamento da manutenção
+            $sql_consulta_data = "SELECT data_manutencao FROM manutencoes WHERE placa = '$placa' AND estado_do_veiculo = 'Manutenção concluída'";
+            $resultado_datas = $conn->query($sql_consulta_data);
+            
+            // Verificar se encontrou uma data
+            if ($resultado_datas->num_rows > 0) {
+                // Extrair a data da primeira linha do resultado
+                $row = $resultado_datas->fetch_assoc();
+                $data_manutencao = $row['data_manutencao'];
+        
+                // Deletar o agendamento da manutenção
+                $sql_agendamento = "UPDATE manutencoes SET estado_do_veiculo = 'Entregue ao proprietario' WHERE placa = '$placa' AND data_manutencao = '$data_manutencao'";
+                $conn->query($sql_agendamento);
+                $sql_atualizar_estado = "UPDATE veiculos SET estado_do_veiculo = 'Com proprietário' WHERE placa = '$placa'";
+                $conn->query($sql_atualizar_estado);
+                echo '<script>alert("Veiculo entregue ao cliente!"); window.location.href = "../funcionario/listarVeiculos.php";</script>';
 
+            } else {
+                echo '<script>alert("Não foi possivel entregar o veiculo ao cliente!\nContate o suporte"); window.location.href = "../funcionario/listarVeiculos.php";</script>';
+
+            }
+        
+            // Fechar a conexão com o banco de dados
+            $conn->close();
+        }
+
+    }
 
 
 if (isset($_GET["funcao"])) {
@@ -85,6 +118,9 @@ if (isset($_GET["funcao"])) {
             break;
         case "cancelarAgendamento":
             cancelarAgendamento($_POST["placa"]);
+            break;
+        case "finalizarManutencao":
+            finalizarManutencao($_POST["placa"]);
             break;
         // Adicione mais cases para outras funções
         default:

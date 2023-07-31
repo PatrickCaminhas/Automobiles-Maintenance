@@ -8,91 +8,9 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'funcionario') {
 }
 
 require_once '../funcoes/conexao.php';
+require_once '../funcoes/veiculo.php';
 $conn = conectarBancoDados();
 // Função para obter os dados do veículo pelo ID
-function obterDadosVeiculo($placa, $conn)
-{
-    $placa_veiculo = mysqli_real_escape_string($conn, $placa);
-    $sql = "SELECT v.id as veiculo_id, p.nome as proprietario_nome, p.telefone as proprietario_telefone,
-            v.marca, v.modelo, v.ano, v.placa, v.estado_do_veiculo
-            FROM veiculos v
-            INNER JOIN proprietarios p ON v.proprietario_id = p.id
-            WHERE v.placa = '$placa_veiculo'";
-    $resultado = $conn->query($sql);
-
-    if ($resultado->num_rows == 1) {
-        $dadosVeiculo = $resultado->fetch_assoc();
-    } else {
-        $dadosVeiculo = null;
-    }
-
-    return $dadosVeiculo;
-}
-
-function obterObservacoes($placa, $conn)
-{
-    $placa_veiculo = mysqli_real_escape_string($conn, $placa);
-    $sql = "SELECT observacoes FROM manutencoes WHERE placa = '$placa_veiculo' AND data_manutencao = (SELECT MAX(data_manutencao) FROM manutencoes WHERE placa = '$placa_veiculo')";
-    $resultado = $conn->query($sql);
-
-    if ($resultado->num_rows == 1) {
-        $observacoes = $resultado->fetch_assoc();
-    } else {
-        $observacoes = '';
-    }
-
-    return $observacoes;
-}
-
-function obterDataManutencao($placa, $conn){
-    $placa_veiculo = mysqli_real_escape_string($conn, $placa);
-    $sql = "SELECT data_manutencao FROM manutencoes WHERE placa = '$placa_veiculo' AND data_manutencao = (SELECT MAX(data_manutencao) FROM manutencoes WHERE placa = '$placa_veiculo')";
-    $resultado = $conn->query($sql);
-
-    if ($resultado->num_rows == 1) {
-        $dataManutencaoArray = $resultado->fetch_assoc();
-        $dataManutencao = $dataManutencaoArray['data_manutencao'];
-    } else {
-        $dataManutencao = '';
-    }
-
-    return $dataManutencao;
-
-}
-
-function obterTipoServico($placa, $conn){
-    $placa_veiculo = mysqli_real_escape_string($conn, $placa);
-    $sql = "SELECT tipo_servico FROM manutencoes WHERE placa = '$placa_veiculo' AND data_manutencao = (SELECT MAX(data_manutencao) FROM manutencoes WHERE placa = '$placa_veiculo')";
-    $resultado = $conn->query($sql);
-
-    if ($resultado->num_rows == 1) {
-        $tipoServicoArray = $resultado->fetch_assoc();
-        $tipoServico = $tipoServicoArray['tipo_servico'];
-
-    } else {
-        $tipoServico = '';
-    }
-
-    return $tipoServico;
-}
-
-function obterCusto($placa, $conn){
-    $placa_veiculo = mysqli_real_escape_string($conn, $placa);
-    $sql = "SELECT custo FROM manutencoes WHERE placa = '$placa_veiculo' AND data_manutencao = (SELECT MAX(data_manutencao) FROM manutencoes WHERE placa = '$placa_veiculo')";
-    $resultado = $conn->query($sql);
-
-    if ($resultado->num_rows == 1) {
-        $custoArray = $resultado->fetch_assoc();
-        $custo = $custoArray['custo'];
-
-    } else {
-        $custo = '';
-    }
-
-    return $custo;
-}
-
-
 
 // Obter os dados do veículo pelo ID passado na URL
 if (isset($_POST["placa"])) {
