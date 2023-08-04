@@ -1,12 +1,7 @@
 <?php
 session_start();
-require_once '../funcoes/conexao.php';
-$conn = conectarBancoDados();
-if (!isset($_SESSION["user_id"]) || $_SESSION['user_role'] !== 'proprietario') {
-    header("Location: ../index.php");
-    exit;
-}
-$user_id = $_SESSION['user_id'];
+require_once '../includes/headerCliente.php';
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -55,7 +50,7 @@ $user_id = $_SESSION['user_id'];
     </div>
 
     <!-- Formulário para alterar as informações do veículo -->
-    <form action="../funcoes/veiculo.php?funcao=alterarVeiculo" method="post">
+    <form action="../controllers/veiculosController.php?funcao=alterarVeiculo" method="post">
         <!-- Os campos "marca", "modelo" e "ano" serão preenchidos automaticamente pelo JavaScript -->
         <label for="marca">Marca:</label>
         <input type="text" id="marca" name="marca" required><br>
@@ -68,6 +63,7 @@ $user_id = $_SESSION['user_id'];
 
         <!-- Campo oculto para enviar a placa selecionada -->
         <input type="hidden" name="placa" id="placa-selecionada" value="">
+        <input type="hidden" name="user_id" id="user_id" value="<?php echo $user_id ?>">
 
         <input type="submit" value="Atualizar">
         <input type="reset" value="Limpar">

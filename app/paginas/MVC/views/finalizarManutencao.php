@@ -2,13 +2,9 @@
 session_start();
 
 // Verificar se o usuário está logado como funcionário
-if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'funcionario') {
-    header("Location: ../index.php"); // Redirecionar para a página de login se não estiver logado como funcionário
-    exit;
-}
+require_once '../includes/headerFuncionario.php';
 
-require_once '../funcoes/conexao.php';
-require_once '../funcoes/veiculo.php';
+require_once '../models/veiculo.php';
 
 $conn = conectarBancoDados();
 // Função para obter os dados do veículo pelo ID
@@ -16,11 +12,11 @@ $conn = conectarBancoDados();
 // Obter os dados do veículo pelo ID passado na URL
 if (isset($_POST["placa"])) {
     $placa_veiculo = $_POST["placa"];
-    $dadosVeiculo = obterDadosVeiculo($placa_veiculo, $conn);
-    $observacoes = obterObservacoes($placa_veiculo, $conn);
-    $dataManutencao = obterDataManutencao($placa_veiculo, $conn);
-    $tipoServico = obterTipoServico($placa_veiculo, $conn);
-    $custo = obterCusto($placa_veiculo, $conn);
+    $dadosVeiculo = obterDadosVeiculo($placa_veiculo);
+    $observacoes = obterObservacoes($placa_veiculo);
+    $dataManutencao = obterDataManutencao($placa_veiculo);
+    $tipoServico = obterTipoServico($placa_veiculo);
+    $custo = obterCusto($placa_veiculo);
     $sqlEstado = "SELECT estado_do_veiculo FROM veiculos WHERE placa = '$placa_veiculo'";
     $resultadoEstado = $conn->query($sqlEstado);
     $estado = $resultadoEstado->fetch_assoc();
@@ -43,7 +39,7 @@ if (isset($_POST["placa"])) {
 <body>
     <h2>Entrega de veiculo</h2>
     <?php if ($dadosVeiculo) { ?>
-        <form action="../funcoes/manutencoes.php?funcao=finalizarManutencao" method="POST">
+        <form action="../controllers/manutencoesController.php?funcao=finalizarManutencao" method="POST">
             <h3>Você tem certeza que quer entregar o veiculo:</h3>
             <label for="placa">Placa do Veículo: <?php echo $_POST["placa"]; ?></label> <br>
             <input type="hidden" name="placa" value="<?php echo $_POST["placa"]; ?>">

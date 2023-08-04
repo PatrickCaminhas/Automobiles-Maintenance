@@ -1,4 +1,11 @@
-<?php ?>
+<?php 
+
+
+session_start();
+
+require_once '../includes/headerCliente.php';
+
+?>
 <!DOCTYPE html>
 <html>
 <head>

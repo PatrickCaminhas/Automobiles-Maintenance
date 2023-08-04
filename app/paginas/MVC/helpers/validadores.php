@@ -70,7 +70,21 @@ function validarEmail($email)
     }
 }
 
+function validarPlaca($placa)
+{
+    // Transformar todas as letras em maiúsculas
+    $placa = strtoupper(trim($placa));
 
+    // Verificar se a placa tem exatamente 7 caracteres
+    if (strlen($placa) !== 7) {
+        return false;
+    }
 
+    // Verificar o formato da placa usando expressão regular
+    if (!preg_match('/^[A-Z]{3}\d[A-Z]\d{2}$/', $placa)) {
+        return false;
+    }
 
+    return true;
+}
 ?>

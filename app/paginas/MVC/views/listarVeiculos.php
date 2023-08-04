@@ -2,17 +2,17 @@
 session_start();
 
 // Verificar se o usuário está logado como funcionário
-if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'funcionario') {
-    header("Location: ../index.php"); // Redirecionar para a página de login se não estiver logado como funcionário
-    exit;
-}
+require_once '../includes/headerFuncionario.php';
 
-require_once '../funcoes/conexao.php';
-require_once '../funcoes/veiculo.php';
+require_once '../models/veiculo.php';
 // Função para obter a lista de veículos com estados diferentes de "Com proprietário" e "Disponível para retirada"
 
 
 $listaVeiculos = obterListaVeiculos();
+
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -24,7 +24,13 @@ $listaVeiculos = obterListaVeiculos();
 
 <body>
     <h2>Alteração de manuteções</h2>
-
+    <?php
+    if (empty($listaVeiculos)) {
+        echo "Não há veiculos para serem alterados.";
+    } else {
+      
+    ?>
+    <h3>Veiculos em manutenção</h3>
     <table>
         <tr>
             <th>Proprietário</th>
@@ -41,7 +47,10 @@ $listaVeiculos = obterListaVeiculos();
             <th>Ação</th>
             <th>Finalizar</th>
         </tr>
-        <?php foreach ($listaVeiculos as $veiculo) { ?>
+
+        <?php
+        } 
+        foreach ($listaVeiculos as $veiculo) { ?>
             <tr>
 
 

@@ -1,20 +1,21 @@
 <?php
 session_start();
-require_once '../funcoes/conexao.php';
 
 // Verifique se o usuário está autenticado, se não redirecione para a página de login
-if (!isset($_SESSION["user_id"]) || $_SESSION['user_role'] !== 'proprietario') {
-    header("Location: ../index.php");
-    exit;
-}
+require_once '../includes/headerCliente.php';
+
 
 // Obtém o nome do usuário autenticado
 $user_nome = $_SESSION["user_nome"];
-$user_id = $_SESSION['user_id'];
+
 $conn = conectarBancoDados();
 $sql_consulta_veiculos = "SELECT id, placa, marca, modelo, ano, estado_do_veiculo FROM veiculos WHERE proprietario_id = $user_id";
 $resultado_veiculos = $conn->query($sql_consulta_veiculos);
-$conn->close();
+
+
+
+
+
 
 ?>
 
@@ -45,6 +46,7 @@ $conn->close();
                 <th>Modelo</th>
                 <th>Ano</th>
                 <th>Estado</th>
+                <th>Ação</th>
 
             </tr>
             <?php
@@ -55,6 +57,7 @@ $conn->close();
                 $modelo = $veiculo['modelo'];
                 $ano = $veiculo['ano'];
                 $estado = $veiculo['estado_do_veiculo'];
+                $sql_consulta_manutecao = "SELECT * FROM manutencoes WHERE placa = '$placa' AND estado_do_veiculo != 'Entregue ao proprietario' AND data_manutencao = (SELECT MAX(data_manutencao) FROM manutencoes WHERE placa = '$placa')";
 
                 echo "<tr>";
                 echo "<td>$placa</td>";
@@ -62,6 +65,19 @@ $conn->close();
                 echo "<td>$modelo</td>";
                 echo "<td>$ano</td>";
                 echo "<td>$estado</td>";
+                echo "<td>
+                <form action='verificarManutencao.php' method='post'>
+                <input type='hidden' name='placa' value='$placa'>
+                 <input type='submit' value='Verificar' ";
+                 ?>
+                 <?php
+                    $resultado_manutencao = $conn->query($sql_consulta_manutecao);
+                    if ($resultado_manutencao->num_rows == 0) {
+                        echo "disabled";
+                    }
+                 
+                 
+                 echo " ></form></td>";
                 echo "</tr>";
             }
             ?>
@@ -74,8 +90,7 @@ $conn->close();
     ?>
     <a href="cadastroVeiculo.php">Cadastrar veiculo</a> <br>
     <a href="alteracaoVeiculo.php">Alterar veiculo</a> <br>
-    <a href="excluirVeiculo.php">Excluir veiculo</a> <br>
-    <a href="../logout.php">Logout</a>
+    <a href="../controllers/logout.php">Logout</a>
 </body>
 
 </html>

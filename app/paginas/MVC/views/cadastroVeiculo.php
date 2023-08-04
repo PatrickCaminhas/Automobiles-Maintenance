@@ -1,11 +1,7 @@
 <?php
 session_start();
-require_once '../funcoes/conexao.php';
-if (!isset($_SESSION["user_id"]) || $_SESSION['user_role'] !== 'proprietario') {
-    header("Location: ../index.php");
-    exit;
-}
-$user_id = $_SESSION['user_id'];
+require_once '../includes/headerCliente.php';
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -16,7 +12,7 @@ $user_id = $_SESSION['user_id'];
 
 <body>
     <h2>Cadastro de Veículo</h2>
-    <form action="../funcoes/veiculo.php?funcao=cadastrarVeiculo" method="post">
+    <form action="../controllers/veiculosController.php?funcao=cadastrarVeiculo" method="post">
         <label for="marca">Marca:</label>
         <input type="text" id="marca" name="marca" required><br>
 
@@ -27,9 +23,10 @@ $user_id = $_SESSION['user_id'];
         <input type="number" id="ano" name="ano" required><br>
 
         <label for="placa">Placa:</label>
+        <input type="text" id="placa" name="placa" required><br>
         <?php
 
-
+/*
         // Loop para criar os selects das letras da placa
         echo '<select name="placa_letra1" required>';
         for ($i = 65; $i <= 90; $i++) {
@@ -78,11 +75,12 @@ $user_id = $_SESSION['user_id'];
             echo "<option value='$i'>$i</option>";
         }
         echo '</select>';
+        */
         ?>
         <br>
 
         <!-- Campo oculto para enviar o ID do proprietário -->
-        <input type="hidden" name="proprietario_id" value="<?php echo $_SESSION['user_id']; ?>">
+        <input type="hidden" name="user_id" value="<?php echo $_SESSION['user_id']; ?>">
 
         <input type="submit" value="Cadastrar">
         <input type="button" value="Voltar" onclick="window.location.href='painel.php'">

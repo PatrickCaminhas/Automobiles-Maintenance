@@ -1,12 +1,8 @@
 <?php
 session_start();
-require_once '../funcoes/conexao.php';
-$conn = conectarBancoDados();
-if (!isset($_SESSION["user_id"]) || $_SESSION['user_role'] !== 'proprietario') {
-    header("Location: ../index.php");
-    exit;
-}
-$user_id = $_SESSION['user_id'];
+require_once '../helpers/conexao.php';
+require_once '../includes/headerCliente.php';
+
 
 ?>
 <!DOCTYPE html>
@@ -26,7 +22,7 @@ $user_id = $_SESSION['user_id'];
     } else {
 
         ?>
-        <form action="../funcoes/manutencoes.php?funcao=cancelarAgendamento" method="post">
+        <form action="../controllers/manutencoesController.php?funcao=cancelarAgendamento" method="post">
             <label for="placa">Placa do Veículo:</label>
             <select id="placa" name="placa" required>
                 <option value="" data-default disabled selected></option>

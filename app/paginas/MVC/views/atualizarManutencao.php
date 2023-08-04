@@ -2,29 +2,24 @@
 session_start();
 
 // Verificar se o usuário está logado como funcionário
-if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'funcionario') {
-    header("Location: ../index.php"); // Redirecionar para a página de login se não estiver logado como funcionário
-    exit;
-}
+require_once '../includes/headerFuncionario.php';
+require_once '../models/veiculo.php';
 
-require_once '../funcoes/conexao.php';
-require_once '../funcoes/veiculo.php';
-$conn = conectarBancoDados();
 // Função para obter os dados do veículo pelo ID
 
 // Obter os dados do veículo pelo ID passado na URL
 if (isset($_POST["placa"])) {
     $placa_veiculo = $_POST["placa"];
-    $dadosVeiculo = obterDadosVeiculo($placa_veiculo, $conn);
-    $observacoes = obterObservacoes($placa_veiculo, $conn);
-    $dataManutencao = obterDataManutencao($placa_veiculo, $conn);
-    $tipoServico = obterTipoServico($placa_veiculo, $conn);
-    $custo = obterCusto($placa_veiculo, $conn);
+    $dadosVeiculo = obterDadosVeiculo($placa_veiculo);
+    $observacoes = obterObservacoes($placa_veiculo);
+    $dataManutencao = obterDataManutencao($placa_veiculo);
+    $tipoServico = obterTipoServico($placa_veiculo);
+    $custo = obterCusto($placa_veiculo);
     $sqlEstado = "SELECT estado_do_veiculo FROM veiculos WHERE placa = '$placa_veiculo'";
     $resultadoEstado = $conn->query($sqlEstado);
     $estado = $resultadoEstado->fetch_assoc();
     $estado_do_veiculo = $estado['estado_do_veiculo'];
-    
+
     $conn->close();
 } else {
     header("Location: listarVeiculos.php");
@@ -42,7 +37,7 @@ if (isset($_POST["placa"])) {
 <body>
     <h2>Atualizar Manutenção</h2>
     <?php if ($dadosVeiculo) { ?>
-        <form action="alterarManutencao.php" method="POST">
+        <form action="../controllers/manutencoesController.php?funcao=atualizarManutencao" method="POST">
             <label for="placa">Placa do Veículo:
                 <?php echo $_POST["placa"]; ?>
             </label> <br>
@@ -63,10 +58,13 @@ if (isset($_POST["placa"])) {
                 <option value="Manutenção concluída">Manutenção concluída.</option>
             </select><br>
             <label for="data_final">Previsão de finalização:</label>
-            <input type="date" id="data_final" name="data_final" required required value="<?php echo $dataManutencao ?>"><br>
+            <input type="date" id="data_final" name="data_final" required required
+                value="<?php echo $dataManutencao ?>"><br>
             <label for="tipo_servico">Tipo de Serviço:</label>
             <select id="tipo_servico" name="tipo_servico" required>
-                <option value="" data-default disabled selected><?php echo $tipoServico ?></option>
+                <option value="" data-default disabled selected>
+                    <?php echo $tipoServico ?>
+                </option>
                 <option value="Troca de óleo">Troca de óleo</option>
                 <option value="Troca de pneus">Troca de pneus</option>
                 <option value="Troca de bateria">Troca de bateria</option>
@@ -98,22 +96,22 @@ if (isset($_POST["placa"])) {
 
 
     <script>
-    // Obtém a referência ao elemento de data da manutenção
-    const dataManutencaoInput = document.getElementById('data_manutencao');
-    const dataFinalInput = document.getElementById('data_final');
+        // Obtém a referência ao elemento de data da manutenção
+        const dataManutencaoInput = document.getElementById('data_manutencao');
+        const dataFinalInput = document.getElementById('data_final');
 
-    // Obtém a data de $dataManutencao (formato AAAA-MM-DD) e cria um objeto Date
-    const dataManutencao = new Date('<?php echo $dataManutencao ?>');
+        // Obtém a data de $dataManutencao (formato AAAA-MM-DD) e cria um objeto Date
+        const dataManutencao = new Date('<?php echo $dataManutencao ?>');
 
-    // Adiciona um dia à data de $dataManutencao para obter a data mínima permitida
-    dataManutencao.setDate(dataManutencao.getDate() + 1);
+        // Adiciona um dia à data de $dataManutencao para obter a data mínima permitida
+        dataManutencao.setDate(dataManutencao.getDate() + 1);
 
-    // Converte a data mínima para o formato aceito pelo campo de data (AAAA-MM-DD)
-    const dataMinima = dataManutencao.toISOString().split('T')[0];
+        // Converte a data mínima para o formato aceito pelo campo de data (AAAA-MM-DD)
+        const dataMinima = dataManutencao.toISOString().split('T')[0];
 
-    // Define a data mínima no campo de data
-    dataFinalInput.setAttribute('min', dataMinima);
-</script>
+        // Define a data mínima no campo de data
+        dataFinalInput.setAttribute('min', dataMinima);
+    </script>
 
 </body>
 
