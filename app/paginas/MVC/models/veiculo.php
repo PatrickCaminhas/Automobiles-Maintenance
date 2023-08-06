@@ -224,7 +224,7 @@ function obterListaVeiculos()
 FROM manutencoes m
 INNER JOIN veiculos v ON m.placa = v.placa
 LEFT JOIN proprietarios p ON v.proprietario_id = p.id
-WHERE v.estado_do_veiculo NOT IN ('Com proprietario') AND m.estado_do_veiculo NOT IN ('Entregue ao proprietario');";
+WHERE v.estado_do_veiculo NOT IN ('Com proprietario') AND m.estado_do_veiculo NOT IN ('Entregue ao proprietario') AND m.estado_do_veiculo NOT LIKE 'Cancelamento de agendamento de manutenção realizado para o veículo de placa:%' ;";
     $resultado = $conn->query($sql);
     $listaVeiculos = array();
 
@@ -261,17 +261,19 @@ function obterDadosVeiculo($placa)
 function obterObservacoes($placa)
 {
     $conn = conectarBancoDados();
-
-    $placa_veiculo = mysqli_real_escape_string($conn, $placa);
-    $sql = "SELECT observacoes FROM manutencoes WHERE placa = '$placa_veiculo' AND data_manutencao = (SELECT MAX(data_manutencao) FROM manutencoes WHERE placa = '$placa_veiculo')";
-    $resultado = $conn->query($sql);
-
-    if ($resultado->num_rows == 1) {
-        $observacoes = $resultado->fetch_assoc();
+    $sql = "SELECT observacoes FROM manutencoes WHERE placa = '$placa' AND id = (SELECT MAX(id) FROM manutencoes WHERE placa = '$placa')";
+    $result = $conn->query($sql);
+    
+    // Verifica se há resultados na consulta
+    if ($result->num_rows > 0) {
+        // Retorna o array associativo com as observações
+        $observacoes = $result->fetch_assoc();
     } else {
-        $observacoes = '';
+        // Caso não haja resultados, retorna um array vazio
+        $observacoes = array();
     }
 
+    $conn->close();
     return $observacoes;
 }
 
@@ -280,17 +282,17 @@ function obterDataManutencao($placa)
     $conn = conectarBancoDados();
 
     $placa_veiculo = mysqli_real_escape_string($conn, $placa);
-    $sql = "SELECT data_manutencao FROM manutencoes WHERE placa = '$placa_veiculo' AND data_manutencao = (SELECT MAX(data_manutencao) FROM manutencoes WHERE placa = '$placa_veiculo')";
+    $sql = "SELECT data_manutencao FROM manutencoes WHERE placa = '$placa_veiculo' AND id = (SELECT MAX(id) FROM manutencoes WHERE placa = '$placa_veiculo')";
     $resultado = $conn->query($sql);
 
     if ($resultado->num_rows == 1) {
-        $dataManutencaoArray = $resultado->fetch_assoc();
-        $dataManutencao = $dataManutencaoArray['data_manutencao'];
+        $data_manutencaoArray = $resultado->fetch_assoc();
+        $data_manutencao = $data_manutencaoArray['data_manutencao'];
     } else {
-        $dataManutencao = '';
+        $data_manutencao = '';
     }
 
-    return $dataManutencao;
+    return $data_manutencao;
 
 }
 
@@ -299,7 +301,7 @@ function obterDataFinal($placa){
     $conn = conectarBancoDados();
 
     $placa_veiculo = mysqli_real_escape_string($conn, $placa);
-    $sql = "SELECT previsaoTermino FROM manutencoes WHERE placa = '$placa_veiculo' AND data_manutencao = (SELECT MAX(data_manutencao) FROM manutencoes WHERE placa = '$placa_veiculo')";
+    $sql = "SELECT previsaoTermino FROM manutencoes WHERE placa = '$placa_veiculo' AND id = (SELECT MAX(id) FROM manutencoes WHERE placa = '$placa_veiculo')";
     $resultado = $conn->query($sql);
 
     if ($resultado->num_rows == 1) {
@@ -318,7 +320,7 @@ function obterTipoServico($placa)
     $conn = conectarBancoDados();
 
     $placa_veiculo = mysqli_real_escape_string($conn, $placa);
-    $sql = "SELECT tipo_servico FROM manutencoes WHERE placa = '$placa_veiculo' AND data_manutencao = (SELECT MAX(data_manutencao) FROM manutencoes WHERE placa = '$placa_veiculo')";
+    $sql = "SELECT tipo_servico FROM manutencoes WHERE placa = '$placa_veiculo' AND id = (SELECT MAX(id) FROM manutencoes WHERE placa = '$placa_veiculo')";
     $resultado = $conn->query($sql);
 
     if ($resultado->num_rows == 1) {
@@ -336,7 +338,7 @@ function obterCusto($placa)
 {
     $conn = conectarBancoDados();
     $placa_veiculo = mysqli_real_escape_string($conn, $placa);
-    $sql = "SELECT custo FROM manutencoes WHERE placa = '$placa_veiculo' AND data_manutencao = (SELECT MAX(data_manutencao) FROM manutencoes WHERE placa = '$placa_veiculo')";
+    $sql = "SELECT custo FROM manutencoes WHERE placa = '$placa_veiculo' AND id = (SELECT MAX(id) FROM manutencoes WHERE placa = '$placa_veiculo')";
     $resultado = $conn->query($sql);
 
     if ($resultado->num_rows == 1) {

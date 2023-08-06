@@ -1,6 +1,6 @@
 <?php
 require_once '../helpers/conexao.php';
-class Manutencao
+class Manutencao implements SplSubject
 {
 
     private $placa;
@@ -10,6 +10,11 @@ class Manutencao
     private $tipo_servico;
     private $observacoes;
     private $custo;
+    private $observers = [];
+    private $notificacoes = [];
+
+    private $acao;
+
 
     public function __construct($placa, $estado_do_veiculo, $dataManutencao, $dataTermino, $tipo_servico, $observacoes, $custo)
     {
@@ -23,8 +28,43 @@ class Manutencao
         $this->custo = $custo;
     }
 
+    public function attach(SplObserver $observer): void
+    {
+        $this->observers[] = $observer;
+    }
 
-   
+    public function detach(SplObserver $observer): void
+    {
+        $index = array_search($observer, $this->observers);
+        if ($index !== false) {
+            unset($this->observers[$index]);
+        }
+    }
+    public function setAcao($acao)
+    {
+        $this->acao = $acao;
+    }
+    public function notify(): void
+    {
+
+        foreach ($this->observers as $observer) {
+
+            $observer->setAcao($this->acao);
+
+            $observer->update($this);
+
+        }
+
+    }
+
+
+    public function addNotificacao($notificacao)
+    {
+
+        $this->notificacoes[] = $notificacao;
+    }
+
+
 
     public function getPlaca()
     {
@@ -36,9 +76,26 @@ class Manutencao
         $this->placa = $placa;
     }
 
-    public function getEstadoDoVeiculo()
+    public function getEstadoDoVeiculo($placa)
     {
-        return $this->estado_do_veiculo;
+        $conn = conectarBancoDados();
+        $sql = "SELECT estado_do_veiculo FROM veiculos WHERE placa = '$placa'";
+        $result = $conn->query($sql);
+        $estado = $result->fetch_assoc();
+        $estado_do_veiculo = $estado['estado_do_veiculo'];
+        $conn->close();
+        return $estado_do_veiculo;
+    }
+
+    public function getEstadoUltimaManutencao($placa)
+    {
+        $conn = conectarBancoDados();
+        $sql = "SELECT estado_do_veiculo FROM manutencoes WHERE placa = '$placa' AND id = (SELECT MAX(id) FROM manutencoes WHERE placa = '$placa')";
+        $result = $conn->query($sql);
+        $estado = $result->fetch_assoc();
+        $estado_da_manutencao = $estado['estado_do_veiculo'];
+        $conn->close();
+        return $estado_da_manutencao;
     }
 
     public function setEstadoDoVeiculo($estado_do_veiculo)
@@ -76,9 +133,15 @@ class Manutencao
         $this->tipo_servico = $tipo_servico;
     }
 
-    public function getObservacoes()
+    public function getObservacoes($placa)
     {
-        return $this->observacoes;
+        $conn = conectarBancoDados();
+        $sql = "SELECT observacao FROM manutencoes WHERE placa = '$placa' AND id = (SELECT MAX(id) FROM manutencoes WHERE placa = '$placa')";
+        $result = $conn->query($sql);
+        $estado = $result->fetch_assoc();
+        $observacao_da_manutencao = $estado['observacao'];
+        $conn->close();
+        return $observacao_da_manutencao;
     }
 
     public function setObservacoes($observacoes)
@@ -100,7 +163,7 @@ class Manutencao
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $placa = $_POST["placa"];
             $data_manutencao = $_POST["data_manutencao"];
-            $descricao = $_POST["descricao"];
+
             // Realize o agendamento da manutenção no banco de dados
             $conn = conectarBancoDados();
 
@@ -108,6 +171,13 @@ class Manutencao
             // e atualizar o campo "estado_do_veiculo" na tabela de veículos para refletir que o veículo está em manutenção.
             // Exemplo:
             // 1. Inserir o agendamento na tabela "manutencoes": 
+
+            $sql_id_cliente = "SELECT proprietario_id FROM veiculos WHERE placa = '$placa'";
+            $result = $conn->query($sql_id_cliente);
+            $id_c = $result->fetch_assoc();
+            $id_cliente = $id_c['proprietario_id'];
+            $_SESSION['id_cliente'] = $id_cliente;
+
 
             $sql_atualizar_estado = "UPDATE veiculos SET estado_do_veiculo = 'Entrega agendada para o dia: $data_manutencao' WHERE placa = '$placa'";
             $conn->query($sql_atualizar_estado);
@@ -117,10 +187,13 @@ class Manutencao
             $conn->query($sql_agendamento);
 
             // 2. Atualizar o campo "estado_do_veiculo" na tabela "veiculos" para refletir que o veículo está em manutenção.
-
+            $mensagem = "Agendamento de manutenção para o veículo com placa $placa";
+            $this->addNotificacao($mensagem);
+            $this->setAcao("agendar");
+            $this->notify();
 
             $conn->close();
-            echo '<script>alert("Manutenção agendada com sucesso!"); window.location.href = "../views/painel.php";</script>';
+            header("Location: ../views/painel.php");
 
         }
     }
@@ -136,7 +209,11 @@ class Manutencao
 
             // Atualizar o campo "estado_do_veiculo" na tabela "veiculos" para refletir que o veículo está com proprietário
 
-
+            $sql_id_cliente = "SELECT proprietario_id FROM veiculos WHERE placa = '$placa'";
+            $result = $conn->query($sql_id_cliente);
+            $id_c = $result->fetch_assoc();
+            $id_cliente = $id_c['proprietario_id'];
+            $_SESSION['id_cliente'] = $id_cliente;
             // Consultar a data de agendamento da manutenção
             $sql_consulta_data = "SELECT data_manutencao FROM manutencoes WHERE placa = '$placa' AND estado_do_veiculo LIKE 'Entrega agendada para o dia:%'";
             $resultado_datas = $conn->query($sql_consulta_data);
@@ -148,11 +225,15 @@ class Manutencao
                 $data_manutencao = $row['data_manutencao'];
 
                 // Deletar o agendamento da manutenção
-                $sql_agendamento = "DELETE FROM manutencoes WHERE placa = '$placa' AND data_manutencao = '$data_manutencao'";
+                $sql_agendamento = "UPDATE manutencoes SET estado_do_veiculo = 'Cancelamento de agendamento de manutenção realizado para o veículo de placa: $placa' WHERE placa = '$placa' AND data_manutencao = '$data_manutencao'";
                 $conn->query($sql_agendamento);
                 $sql_atualizar_estado = "UPDATE veiculos SET estado_do_veiculo = 'Com proprietário' WHERE placa = '$placa'";
                 $conn->query($sql_atualizar_estado);
-                echo '<script>alert("Agendamento de manutenção cancelada!"); window.location.href = "../views/painel.php";</script>';
+                $mensagem = "Cancelado o agendamento de manutenção para o veículo com placa $placa";
+                $this->addNotificacao($mensagem);
+                $this->setAcao("cancelar");
+                $this->notify();
+                header("Location: ../views/painel.php");
             } else {
                 echo '<script>alert("Não foi encontrado nenhum agendamento para o veículo."); window.location.href = "../views/painel.php";</script>';
             }
@@ -191,8 +272,17 @@ class Manutencao
                 $conn->query($sql_agendamento);
                 $sql_atualizar_estado = "UPDATE veiculos SET estado_do_veiculo = 'Com proprietário' WHERE placa = '$placa'";
                 $conn->query($sql_atualizar_estado);
-                echo '<script>alert("Veiculo entregue ao cliente!"); window.location.href = "../views/listarVeiculos.php";</script>';
+                $mensagem = "Finalizando o agendamento de manutenção para o veículo com placa $placa";
 
+                $sql_id_cliente = "SELECT proprietario_id FROM veiculos WHERE placa = '$placa'";
+                $result = $conn->query($sql_id_cliente);
+                $id_c = $result->fetch_assoc();
+                $id_cliente = $id_c['proprietario_id'];
+                $_SESSION['id_cliente'] = $id_cliente;
+                $this->addNotificacao($mensagem);
+                $this->setAcao("entregue");
+                $this->notify();
+                header("Location: ../views/listarVeiculos.php");
             } else {
                 echo '<script>alert("Não foi possivel entregar o veiculo ao cliente!\nContate o suporte"); window.location.href = "../views/listarVeiculos.php";</script>';
 
@@ -203,22 +293,64 @@ class Manutencao
         }
 
     }
-    public function atualizarManutencao()
-    {
-        $conn = conectarBancoDados();
 
-        $sql = "UPDATE manutencoes SET estado_do_veiculo = '$this->estado_do_veiculo', data_manutencao = '$this->dataManutencao', observacoes = '$this->observacoes',  previsaoTermino = '$this->dataTermino', tipo_servico = '$this->tipo_servico', custo = '$this->custo' WHERE placa = '$this->placa' AND data_manutencao = (SELECT MAX(data_manutencao) FROM manutencoes WHERE placa = '$this->placa')";
-        $sqlveiculo = "UPDATE veiculos SET estado_do_veiculo = '$this->estado_do_veiculo' WHERE placa = '$this->placa'";
+
+public function atualizarManutencao($placa)
+{
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $placa = $_POST["placa"];
+        $conn = conectarBancoDados();
+        $sql = "UPDATE manutencoes SET estado_do_veiculo = '$this->estado_do_veiculo', data_manutencao = '$this->dataManutencao', observacoes = '$this->observacoes', previsaoTermino = '$this->dataTermino', tipo_servico = '$this->tipo_servico', custo = '$this->custo' WHERE placa = '$this->placa' AND id = (SELECT MAX(id) FROM manutencoes WHERE placa = '$this->placa')";
         $conn->query($sql); // Executar a consulta de atualização
+        $sqlveiculo = "UPDATE veiculos SET estado_do_veiculo = '$this->estado_do_veiculo' WHERE placa = '$this->placa'";
         $conn->query($sqlveiculo);
+        $sql_consulta_data1 = "SELECT data_manutencao FROM manutencoes WHERE placa = '$placa' AND estado_do_veiculo = 'Em manutenção'";
+        $resultado_datas1 = $conn->query($sql_consulta_data1);
+        $sql_consulta_data2 = "SELECT data_manutencao FROM manutencoes WHERE placa = '$placa' AND estado_do_veiculo = 'Manutenção concluída'";
+        $resultado_datas2 = $conn->query($sql_consulta_data2);
+
+        // Verifica se a atualização foi bem-sucedida
+        if ($resultado_datas1->num_rows > 0) {
+            $mensagem = "Manutencao do veículo com placa $this->placa foi atualizado com sucesso.";
+
+            $sql_id_cliente = "SELECT proprietario_id FROM veiculos WHERE placa = '$placa'";
+            $result = $conn->query($sql_id_cliente);
+            $id_c = $result->fetch_assoc();
+            $id_cliente = $id_c['proprietario_id'];
+            $_SESSION['id_cliente'] = $id_cliente;
+
+            $this->setAcao("atualizar"); // Alterado para "atualizar"
+
+            $this->addNotificacao($mensagem);
+
+            $this->notify();
+            header("Location: ../views/listarVeiculos.php");
+
+        } else if($resultado_datas2->num_rows > 0){
+            $mensagem = "Manutencao do veículo com placa $this->placa foi atualizado com sucesso.";
+
+            $sql_id_cliente = "SELECT proprietario_id FROM veiculos WHERE placa = '$placa'";
+            $result = $conn->query($sql_id_cliente);
+            $id_c = $result->fetch_assoc();
+            $id_cliente = $id_c['proprietario_id'];
+            $_SESSION['id_cliente'] = $id_cliente;
+
+            $this->setAcao("finalizar"); // Alterado para "atualizar"
+
+            $this->addNotificacao($mensagem);
+
+            $this->notify();
+            header("Location: ../views/listarVeiculos.php");
+        }
+        else {
+            // A atualização falhou
+            echo '<script>alert("Falha ao atualizar o agendamento de manutenção!\nContate o suporte"); window.location.href = "../views/listarVeiculos.php";</script>';
+        }
 
         $conn->close();
-        header("Location: ../views/listarVeiculos.php");
     }
-
-
 }
-
+}
 
 
 ?>

@@ -1,10 +1,10 @@
 <?php
 require_once '../helpers/conexao.php';
-require_once 'usuario.php';
+require 'usuario.php';
 
 
 
-class Proprietario extends usuario
+class Proprietario extends usuario 
 {
 
     private $id;

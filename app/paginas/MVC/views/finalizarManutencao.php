@@ -3,7 +3,7 @@ session_start();
 
 // Verificar se o usuário está logado como funcionário
 require_once '../includes/headerFuncionario.php';
-
+require_once '../includes/headerView.php';
 require_once '../models/veiculo.php';
 
 $conn = conectarBancoDados();
@@ -34,9 +34,13 @@ if (isset($_POST["placa"])) {
 
 <head>
     <title>Atualizar Manutenção - Sistema de Acompanhamento</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
 </head>
 
 <body>
+<?php headerVieW();?>
+
     <h2>Entrega de veiculo</h2>
     <?php if ($dadosVeiculo) { ?>
         <form action="../controllers/manutencoesController.php?funcao=finalizarManutencao" method="POST">
@@ -44,6 +48,7 @@ if (isset($_POST["placa"])) {
             <label for="placa">Placa do Veículo: <?php echo $_POST["placa"]; ?></label> <br>
             <input type="hidden" name="placa" value="<?php echo $_POST["placa"]; ?>">
             <label for="estado">Estado: <?php echo $estado_do_veiculo; ?> </label><br>
+            <input type="hidden" name="data_manutencao" value="<?php echo date("Y-m-d"); ?>">
             <label for="data_final">No dia: <?php echo date("d-m-Y"); ?></label><br>
             <label for="tipo_servico">Serviço: <?php echo $tipoServico ?></label><br>
             <label for="observacoes">Observações: <?php echo $observacoes['observacoes']; ?></label><br>
@@ -58,6 +63,8 @@ if (isset($_POST["placa"])) {
 
 
 
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js" integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa" crossorigin="anonymous"></script>
 
 </body>
 

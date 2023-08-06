@@ -3,7 +3,7 @@ session_start();
 
 // Verificar se o usuário está logado como funcionário
 require_once '../includes/headerFuncionario.php';
-
+require_once '../includes/headerView.php';
 require_once '../models/veiculo.php';
 // Função para obter a lista de veículos com estados diferentes de "Com proprietário" e "Disponível para retirada"
 
@@ -20,9 +20,18 @@ $listaVeiculos = obterListaVeiculos();
 
 <head>
     <title>Alteração de Estados de Manutenção - Sistema de Acompanhamento</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
 </head>
 
 <body>
+<?php headerVieW();?>
+
+<div class="container d-flex align-items-start justify-content-center">
+        <img src="../../../imagens/titulo.png" alt="Descrição da Imagem">
+    </div>
+<div class="d-flex flex-column justify-content-center align-items-center">
+    <div class="col-md-4 border p-4" style="width: 75vw;">
     <h2>Alteração de manuteções</h2>
     <?php
     if (empty($listaVeiculos)) {
@@ -31,7 +40,7 @@ $listaVeiculos = obterListaVeiculos();
       
     ?>
     <h3>Veiculos em manutenção</h3>
-    <table>
+    <table class="table table-striped text-body-white table-hover">
         <tr>
             <th>Proprietário</th>
             <th>Celular</th>
@@ -91,20 +100,24 @@ $listaVeiculos = obterListaVeiculos();
                 <td>
                     <form action="atualizarManutencao.php" method="post">
                         <input type="hidden" name="placa" value="<?php echo $veiculo['placa']; ?>">
-                        <input type="submit" value="Alterar"<?php
+                        <input type="submit" value="Alterar" class=<?php
                            if ($veiculo['estado_manutencao'] == "Manutenção concluída") {
-                               echo "disabled";
-                           }
+                               echo "'fw-medium btn btn-secondary' disabled";
+                           } else{
+                                 echo "'fw-medium btn btn-primary'";
+                        }
                            ?>>
                     </form>
                 </td>
                 <td>
                     <form action="finalizarManutencao.php" method="post">
                         <input type="hidden" name="placa" value="<?php echo $veiculo['placa']; ?>">
-                        <input type="submit" value="Finalizar" <?php
+                        <input type="submit" value="Finalizar" class=<?php
                            if ($veiculo['estado_manutencao'] != "Manutenção concluída") {
-                               echo "disabled";
-                           }
+                            echo "'fw-medium btn btn-secondary' disabled";
+                           } else{
+                                 echo "'fw-medium btn btn-primary'";
+                        }
                            ?>>
                     </form>
                 </td>
@@ -116,7 +129,12 @@ $listaVeiculos = obterListaVeiculos();
 
         <?php } ?>
     </table>
-    <button onclick="window.location.href = 'painelFuncionario.php';">Voltar</button>
+    <button onclick="window.location.href = 'painelFuncionario.php';" class="fw-medium btn btn-primary">Voltar</button>
+    </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js" integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa" crossorigin="anonymous"></script>
+
 </body>
 
 </html>

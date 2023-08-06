@@ -3,7 +3,10 @@ session_start();
 
 // Verificar se o usuário está logado como funcionário
 require_once '../includes/headerFuncionario.php';
+require_once '../includes/headerView.php';
+
 require_once '../models/veiculo.php';
+
 
 // Função para obter os dados do veículo pelo ID
 
@@ -32,9 +35,15 @@ if (isset($_POST["placa"])) {
 
 <head>
     <title>Atualizar Manutenção - Sistema de Acompanhamento</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
 </head>
 
 <body>
+<?php headerVieW();?>
+
+<div class="container-fluid d-flex justify-content-center align-items-center vh-100">
+        <div class="col-md-4 border p-4"> <!-- Adicione a classe border e a classe de espaçamento p-4 -->
     <h2>Atualizar Manutenção</h2>
     <?php if ($dadosVeiculo) { ?>
         <form action="../controllers/manutencoesController.php?funcao=atualizarManutencao" method="POST">
@@ -44,7 +53,7 @@ if (isset($_POST["placa"])) {
             <input type="hidden" name="placa" value="<?php echo $_POST["placa"]; ?>">
             <input type="hidden" name="data_manutencao" value="<?php echo date("Y-m-d"); ?>">
             <label for="estado">Estado:</label>
-            <select id="estado" name="estado" required>
+            <select id="estado" name="estado" class="form-control" required>
                 <option value="" data-default disabled selected>Estado atual:
                     <?php echo $estado_do_veiculo; ?>
                 </option>
@@ -58,10 +67,10 @@ if (isset($_POST["placa"])) {
                 <option value="Manutenção concluída">Manutenção concluída.</option>
             </select><br>
             <label for="data_final">Previsão de finalização:</label>
-            <input type="date" id="data_final" name="data_final" required required
+            <input type="date" id="data_final" name="data_final" class="form-control" required
                 value="<?php echo $dataManutencao ?>"><br>
             <label for="tipo_servico">Tipo de Serviço:</label>
-            <select id="tipo_servico" name="tipo_servico" required>
+            <select id="tipo_servico" name="tipo_servico" class="form-control" required>
                 <option value="" data-default disabled selected>
                     <?php echo $tipoServico ?>
                 </option>
@@ -81,19 +90,20 @@ if (isset($_POST["placa"])) {
             </select><br>
             <label for="observacoes">Observações:</label>
             <textarea id="observacoes" name="observacoes"
-                placeholder="Observações sobre a manutenção"><?php echo $observacoes['observacoes']; ?></textarea><br>
+                placeholder="Observações sobre a manutenção" class="form-control"><?php echo $observacoes['observacoes']; ?></textarea><br>
 
             <label for="custo">Custo:</label>
-            <input type="number" step="0.01" id="custo" name="custo" required value="<?php echo $custo; ?>"><br>
+            <input type="number" step="0.01" id="custo" name="custo" class="form-control" required value="<?php echo $custo; ?>"><br>
 
-            <input type="submit" value="Atualizar">
-            <input type="button" value="Voltar" onclick="window.location.href='listarVeiculos.php'">
+            <input type="submit" value="Atualizar" class="fw-medium btn btn-primary">
+            <input type="button" value="Voltar" class="fw-medium btn btn-primary" onclick="window.location.href='listarVeiculos.php'">
 
         </form>
     <?php } else { ?>
         <p>Veículo não encontrado.</p>
     <?php } ?>
-
+    </div>
+    </div>
 
     <script>
         // Obtém a referência ao elemento de data da manutenção
@@ -101,7 +111,7 @@ if (isset($_POST["placa"])) {
         const dataFinalInput = document.getElementById('data_final');
 
         // Obtém a data de $dataManutencao (formato AAAA-MM-DD) e cria um objeto Date
-        const dataManutencao = new Date('<?php echo $dataManutencao ?>');
+        const dataManutencao = new Date('<?php echo !empty($dataManutencao) ? $dataManutencao : "" ?>');
 
         // Adiciona um dia à data de $dataManutencao para obter a data mínima permitida
         dataManutencao.setDate(dataManutencao.getDate() + 1);
@@ -112,6 +122,8 @@ if (isset($_POST["placa"])) {
         // Define a data mínima no campo de data
         dataFinalInput.setAttribute('min', dataMinima);
     </script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js" integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa" crossorigin="anonymous"></script>
 
 </body>
 

@@ -3,6 +3,7 @@
 session_start();
 require_once '../models/veiculo.php';
 
+
 if (isset($_GET["funcao"])) {
     $funcao = $_GET["funcao"];
     switch ($funcao) {

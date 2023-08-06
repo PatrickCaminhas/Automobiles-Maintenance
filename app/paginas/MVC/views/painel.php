@@ -3,6 +3,11 @@ session_start();
 
 // Verifique se o usuário está autenticado, se não redirecione para a página de login
 require_once '../includes/headerCliente.php';
+require_once '../includes/headerView.php';
+require_once '../models/notificacoes.php';
+require_once '../models/manutencoes.php';
+require_once 'notificacoesView.php';
+require_once '../models/notificacoes.php';
 
 
 // Obtém o nome do usuário autenticado
@@ -24,29 +29,64 @@ $resultado_veiculos = $conn->query($sql_consulta_veiculos);
 
 <head>
     <title>Painel - Sistema de Acompanhamento</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+ 
+
 </head>
 
 <body>
-    <h2>Bem-vindo,
+
+    <div class="container-fluid d-flex justify-content-between align-items-center" style="margin-top: 1rem;">
+    <?php headerVieW();?>
+
+  
+    <a href="../controllers/logout.php" class="btn btn-primary mb-1">Logout</a>
+
+     
+    </div>
+    <div class="container d-flex align-items-start justify-content-center">
+<h2><a>Bem-vindo,</a>
         <?php echo $user_nome; ?>!
+       
     </h2>
-    <p>Esta é a página do painel do usuário proprietário.</p>
+    
+    </div>
+
     <?php
+   
+    // Criar instância do objeto Notificacoes
+    $notificacoes = new Notificacoes();
+    // Adicionar a instância do objeto Notificacoes como observador na classe Manutencao
+    $notificacoesArray = $notificacoes->getNotificacoesFromDB($user_id); // Busque as notificações do banco de dados
+    
+    
+
+
+    // Exibir as notificações na página usando a classe NotificacoesView
+    
+    $notificacoesView = new NotificacoesView();
+    $notificacoesView->mostrarNotificacoes($notificacoesArray);
+
     // Verifique se o usuário possui veículos cadastrados
     if ($resultado_veiculos->num_rows == 0) {
         echo "<p>Você ainda não possui veículos cadastrados.</p>";
+        ?>
+        <div class="d-flex justify-content-center ">
+        <?php
     } else {
         ?>
+        <div class="d-flex flex-column justify-content-center align-items-center">
+    <div class="col-md-4 border p-4" style="width: 75vw;">
         <h3>Seus veículos</h3>
-
-        <table>
-            <tr>
+        <table class="table table-striped text-body-white table-hover">
+            <tr class="table-light ">
                 <th>Placa</th>
                 <th>Marca</th>
                 <th>Modelo</th>
                 <th>Ano</th>
                 <th>Estado</th>
-                <th>Ação</th>
+                <th>Manutenção</th>
 
             </tr>
             <?php
@@ -58,39 +98,59 @@ $resultado_veiculos = $conn->query($sql_consulta_veiculos);
                 $ano = $veiculo['ano'];
                 $estado = $veiculo['estado_do_veiculo'];
                 $sql_consulta_manutecao = "SELECT * FROM manutencoes WHERE placa = '$placa' AND estado_do_veiculo != 'Entregue ao proprietario' AND data_manutencao = (SELECT MAX(data_manutencao) FROM manutencoes WHERE placa = '$placa')";
+                if($estado == "Com proprietário")
 
-                echo "<tr>";
-                echo "<td>$placa</td>";
+                echo "<tr >";
+                echo "<td class=' fw-medium '>$placa</td>";
                 echo "<td>$marca</td>";
                 echo "<td>$modelo</td>";
                 echo "<td>$ano</td>";
-                echo "<td>$estado</td>";
+                echo "<td class=' fw-medium ";
+                if($estado == "Com proprietário"){
+                    echo "text-primary'";
+                }
+                else if($estado == "Manutenção concluída"){
+                    echo " text-success'";
+                }
+                else{
+                    echo "text-warning'";
+                }
+                echo ">$estado</td>";
                 echo "<td>
                 <form action='verificarManutencao.php' method='post'>
                 <input type='hidden' name='placa' value='$placa'>
-                 <input type='submit' value='Verificar' ";
-                 ?>
-                 <?php
-                    $resultado_manutencao = $conn->query($sql_consulta_manutecao);
-                    if ($resultado_manutencao->num_rows == 0) {
-                        echo "disabled";
-                    }
-                 
-                 
-                 echo " ></form></td>";
+                 <input type='submit' value='Verificar' class='fw-medium ";
+                ?>
+                <?php
+                $resultado_manutencao = $conn->query($sql_consulta_manutecao);
+                if ($resultado_manutencao->num_rows == 0) {
+                    echo "btn btn-secondary' disabled ";
+                } else if($estado == "Com proprietário"){
+                    echo "btn btn-secondary' disabled ";
+                }
+                else{
+                    echo "btn btn-primary'";
+                }
+
+
+                echo " ></form></td>";
                 echo "</tr>";
             }
             ?>
         </table>
-
-        <a href="agendamentoManutencao.php">Agendar entrega para manutenção</a> <br>
-        <a href="cancelamentoDeAgendamento.php">Cancelar agendamento de entrega</a> <br>
+        
+        <div class="d-flex flex-column justify-content-center align-items-center">
+        <a href="agendamentoManutencao.php" class="btn btn-primary ">Agendar entrega para manutenção</a> <br>
+        <a href="cancelamentoDeAgendamento.php" class="btn btn-primary "style="margin-top: -1rem;">Cancelar agendamento de entrega</a> <br>
+    
         <?php
     }
     ?>
-    <a href="cadastroVeiculo.php">Cadastrar veiculo</a> <br>
-    <a href="alteracaoVeiculo.php">Alterar veiculo</a> <br>
-    <a href="../controllers/logout.php">Logout</a>
+    <a href="cadastroVeiculo.php" class="btn btn-primary " style="margin-top: -1rem;">Cadastrar veiculo</a> <br>
+    <a href="alteracaoVeiculo.php" class="btn btn-primary" style="margin-top: -1rem; margin-bottom: -1rem;">Alterar veiculo</a> <br></div>
+        </div>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js" integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa" crossorigin="anonymous"></script>
 </body>
 
 </html>

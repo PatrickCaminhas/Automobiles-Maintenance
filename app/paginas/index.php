@@ -1,7 +1,3 @@
 <?php
-
-        header("Location: MVC/views/index.php");
-  
+header("Location: MVC/views/index.php");
 ?>
-
-
