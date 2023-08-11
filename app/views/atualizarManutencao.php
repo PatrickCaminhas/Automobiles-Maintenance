@@ -2,8 +2,8 @@
 session_start();
 
 // Verificar se o usuário está logado como funcionário
-require_once '../includes/headerFuncionario.php';
-require_once '../includes/headerView.php';
+require_once '../../includes/headerFuncionario.php';
+require_once '../../includes/headerView.php';
 
 require_once '../models/veiculo.php';
 
@@ -23,7 +23,6 @@ if (isset($_POST["placa"])) {
     $estado = $resultadoEstado->fetch_assoc();
     $estado_do_veiculo = $estado['estado_do_veiculo'];
 
-    $conn->close();
 } else {
     header("Location: listarVeiculos.php");
     exit;
@@ -40,11 +39,11 @@ if (isset($_POST["placa"])) {
 </head>
 
 <body>
-<?php headerVieW();?>
+
 
 <div class="container-fluid d-flex justify-content-center align-items-center vh-100">
         <div class="col-md-4 border p-4"> <!-- Adicione a classe border e a classe de espaçamento p-4 -->
-    <h2>Atualizar Manutenção</h2>
+    <?php headerVieW();?><h2>Atualizar Manutenção</h2>
     <?php if ($dadosVeiculo) { ?>
         <form action="../controllers/manutencoesController.php?funcao=atualizarManutencao" method="POST">
             <label for="placa">Placa do Veículo:

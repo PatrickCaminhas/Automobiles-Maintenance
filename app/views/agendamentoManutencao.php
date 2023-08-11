@@ -1,7 +1,7 @@
 <?php
 session_start();
-require_once '../includes/headerCliente.php';
-require_once '../includes/headerView.php';
+require_once '../../includes/headerCliente.php';
+require_once '../../includes/headerView.php';
 
 ?>
 <!DOCTYPE html>
@@ -54,7 +54,6 @@ require_once '../includes/headerView.php';
 
                 echo "<option value='$placa' $selected>$placa | $marca | $modelo | $ano</option>";
             }
-            $conn->close();
             ?>
             ?>
         </select><br>

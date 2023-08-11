@@ -2,18 +2,18 @@
 session_start();
 
 // Verifique se o usuário está autenticado, se não redirecione para a página de login
-require_once '../includes/headerCliente.php';
-require_once '../includes/headerView.php';
+require_once '../../includes/headerCliente.php';
+require_once '../../includes/headerView.php';
 require_once '../models/notificacoes.php';
 require_once '../models/manutencoes.php';
 require_once 'notificacoesView.php';
-require_once '../models/notificacoes.php';
 
 
 // Obtém o nome do usuário autenticado
 $user_nome = $_SESSION["user_nome"];
 
-$conn = conectarBancoDados();
+$databaseConnection = DatabaseConnection::getInstance();
+$conn = $databaseConnection->getConnection();
 $sql_consulta_veiculos = "SELECT id, placa, marca, modelo, ano, estado_do_veiculo FROM veiculos WHERE proprietario_id = $user_id";
 $resultado_veiculos = $conn->query($sql_consulta_veiculos);
 

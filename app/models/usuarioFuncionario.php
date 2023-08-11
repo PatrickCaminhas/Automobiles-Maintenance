@@ -1,5 +1,5 @@
 <?php
-require_once '../helpers/conexao.php';
+require_once '../../helpers/conexao.php';
 require_once 'usuario.php';
 class Funcionario
 {
@@ -9,7 +9,8 @@ class Funcionario
     {
         // Realize a autenticação verificando o CPF e senha no banco de dados
         // Substitua 'seu_usuario', 'sua_senha', 'seu_banco_de_dados' pelas suas credenciais
-        $conn = conectarBancoDados();
+        $databaseConnection = DatabaseConnection::getInstance();
+        $conn = $databaseConnection->getConnection();
 
         $sql = "SELECT id, nome FROM usuarios WHERE cpf = '$login' AND senha = '$password'";
         $result = $conn->query($sql);
@@ -26,7 +27,6 @@ class Funcionario
             echo '<script>alert("Login ou senha inválidos. Tente novamente.");window.location.href = "../index.php";</script>';
         }
 
-        $conn->close();
     }
 }
 

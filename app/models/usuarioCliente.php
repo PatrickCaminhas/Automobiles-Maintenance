@@ -1,5 +1,5 @@
 <?php
-require_once '../helpers/conexao.php';
+require_once '../../helpers/conexao.php';
 require 'usuario.php';
 
 
@@ -78,7 +78,8 @@ class Proprietario extends usuario
 
     public function login($login, $password)
     {
-        $conn = conectarBancoDados();
+        $databaseConnection = DatabaseConnection::getInstance();
+        $conn = $databaseConnection->getConnection();
         $sql = "SELECT id, nome, email, telefone  FROM proprietarios WHERE (email = '$login' OR telefone = '$login') AND senha = '$password'";
         $result = $conn->query($sql);
 
@@ -99,7 +100,6 @@ class Proprietario extends usuario
             echo '<script>alert("Login ou senha inválidos. Tente novamente.");window.location.href = "../index.php";</script>';
         }
 
-        $conn->close();
     }
 
 
@@ -107,7 +107,8 @@ class Proprietario extends usuario
     public function cadastrar()
     {
         // Realize o cadastro do novo proprietário no banco de dados
-        $conn = conectarBancoDados();
+        $databaseConnection = DatabaseConnection::getInstance();
+        $conn = $databaseConnection->getConnection();
 
         $sqlVerificaEmail = "SELECT * FROM proprietarios WHERE email = '$this->email'";
         $sqlVerificaTelefone = "SELECT * FROM proprietarios WHERE telefone = '$this->telefone'";
@@ -140,7 +141,6 @@ class Proprietario extends usuario
             }
         }
 
-        $conn->close();
     }
 
 

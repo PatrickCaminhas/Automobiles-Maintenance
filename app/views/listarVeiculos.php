@@ -2,8 +2,8 @@
 session_start();
 
 // Verificar se o usuário está logado como funcionário
-require_once '../includes/headerFuncionario.php';
-require_once '../includes/headerView.php';
+require_once '../../includes/headerFuncionario.php';
+require_once '../../includes/headerView.php';
 require_once '../models/veiculo.php';
 // Função para obter a lista de veículos com estados diferentes de "Com proprietário" e "Disponível para retirada"
 
@@ -27,9 +27,7 @@ $listaVeiculos = obterListaVeiculos();
 <body>
 <?php headerVieW();?>
 
-<div class="container d-flex align-items-start justify-content-center">
-        <img src="../../../imagens/titulo.png" alt="Descrição da Imagem">
-    </div>
+
 <div class="d-flex flex-column justify-content-center align-items-center">
     <div class="col-md-4 border p-4" style="width: 75vw;">
     <h2>Alteração de manuteções</h2>
@@ -101,9 +99,14 @@ $listaVeiculos = obterListaVeiculos();
                     <form action="atualizarManutencao.php" method="post">
                         <input type="hidden" name="placa" value="<?php echo $veiculo['placa']; ?>">
                         <input type="submit" value="Alterar" class=<?php
+                        $dataHoje = date("Y-m-d");
                            if ($veiculo['estado_manutencao'] == "Manutenção concluída") {
                                echo "'fw-medium btn btn-secondary' disabled";
-                           } else{
+                           } else if($veiculo['data_manutencao'] > $dataHoje) {
+                               echo "'fw-medium btn btn-secondary' disabled";
+                           }else if($veiculo['estado_manutencao'] == "Entregue ao proprietario"){
+                               echo "'fw-medium btn btn-secondary' disabled";
+                           }else{
                                  echo "'fw-medium btn btn-primary'";
                         }
                            ?>>

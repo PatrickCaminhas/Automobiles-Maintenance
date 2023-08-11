@@ -1,5 +1,5 @@
 <?php
-require_once '../helpers/conexao.php';
+require_once '../../helpers/conexao.php';
 class Manutencao implements SplSubject
 {
 
@@ -78,18 +78,19 @@ class Manutencao implements SplSubject
 
     public function getEstadoDoVeiculo($placa)
     {
-        $conn = conectarBancoDados();
+        $databaseConnection = DatabaseConnection::getInstance();
+        $conn = $databaseConnection->getConnection();
         $sql = "SELECT estado_do_veiculo FROM veiculos WHERE placa = '$placa'";
         $result = $conn->query($sql);
         $estado = $result->fetch_assoc();
         $estado_do_veiculo = $estado['estado_do_veiculo'];
-        $conn->close();
         return $estado_do_veiculo;
     }
 
     public function getEstadoUltimaManutencao($placa)
     {
-        $conn = conectarBancoDados();
+        $databaseConnection = DatabaseConnection::getInstance();
+        $conn = $databaseConnection->getConnection();
         $sql = "SELECT estado_do_veiculo FROM manutencoes WHERE placa = '$placa' AND id = (SELECT MAX(id) FROM manutencoes WHERE placa = '$placa')";
         $result = $conn->query($sql);
         $estado = $result->fetch_assoc();
@@ -135,7 +136,8 @@ class Manutencao implements SplSubject
 
     public function getObservacoes($placa)
     {
-        $conn = conectarBancoDados();
+        $databaseConnection = DatabaseConnection::getInstance();
+        $conn = $databaseConnection->getConnection();
         $sql = "SELECT observacao FROM manutencoes WHERE placa = '$placa' AND id = (SELECT MAX(id) FROM manutencoes WHERE placa = '$placa')";
         $result = $conn->query($sql);
         $estado = $result->fetch_assoc();
@@ -165,8 +167,9 @@ class Manutencao implements SplSubject
             $data_manutencao = $_POST["data_manutencao"];
 
             // Realize o agendamento da manutenção no banco de dados
-            $conn = conectarBancoDados();
-
+            $databaseConnection = DatabaseConnection::getInstance();
+            $conn = $databaseConnection->getConnection();
+    
             // Aqui você pode inserir os dados do agendamento na tabela de manutenções (por exemplo, "manutencoes") 
             // e atualizar o campo "estado_do_veiculo" na tabela de veículos para refletir que o veículo está em manutenção.
             // Exemplo:
@@ -205,8 +208,9 @@ class Manutencao implements SplSubject
             $placa = $_POST["placa"];
 
             // Realize o agendamento da manutenção no banco de dados
-            $conn = conectarBancoDados();
-
+            $databaseConnection = DatabaseConnection::getInstance();
+            $conn = $databaseConnection->getConnection();
+    
             // Atualizar o campo "estado_do_veiculo" na tabela "veiculos" para refletir que o veículo está com proprietário
 
             $sql_id_cliente = "SELECT proprietario_id FROM veiculos WHERE placa = '$placa'";
@@ -252,8 +256,9 @@ class Manutencao implements SplSubject
             $placa = $_POST["placa"];
 
             // Realize o agendamento da manutenção no banco de dados
-            $conn = conectarBancoDados();
-
+            $databaseConnection = DatabaseConnection::getInstance();
+            $conn = $databaseConnection->getConnection();
+    
             // Atualizar o campo "estado_do_veiculo" na tabela "veiculos" para refletir que o veículo está com proprietário
 
 
@@ -299,7 +304,8 @@ public function atualizarManutencao($placa)
 {
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $placa = $_POST["placa"];
-        $conn = conectarBancoDados();
+        $databaseConnection = DatabaseConnection::getInstance();
+        $conn = $databaseConnection->getConnection();
         $sql = "UPDATE manutencoes SET estado_do_veiculo = '$this->estado_do_veiculo', data_manutencao = '$this->dataManutencao', observacoes = '$this->observacoes', previsaoTermino = '$this->dataTermino', tipo_servico = '$this->tipo_servico', custo = '$this->custo' WHERE placa = '$this->placa' AND id = (SELECT MAX(id) FROM manutencoes WHERE placa = '$this->placa')";
         $conn->query($sql); // Executar a consulta de atualização
         $sqlveiculo = "UPDATE veiculos SET estado_do_veiculo = '$this->estado_do_veiculo' WHERE placa = '$this->placa'";

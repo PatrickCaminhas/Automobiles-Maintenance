@@ -1,6 +1,6 @@
 <?php
-require_once '../helpers/conexao.php';
-require_once '../includes/headerView.php';
+require_once '../../helpers/conexao.php';
+require_once '../../includes/headerView.php';
 
 session_start();
 

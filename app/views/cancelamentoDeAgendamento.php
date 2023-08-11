@@ -1,8 +1,8 @@
 <?php
 session_start();
-require_once '../helpers/conexao.php';
-require_once '../includes/headerCliente.php';
-require_once '../includes/headerView.php';
+require_once '../../helpers/conexao.php';
+require_once '../../includes/headerCliente.php';
+require_once '../../includes/headerView.php';
 
 
 ?>
@@ -60,7 +60,6 @@ require_once '../includes/headerView.php';
                         }
 
 
-                        $conn->close();
 
                         ?>
 

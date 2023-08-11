@@ -1,8 +1,8 @@
 <?php
 session_start();
 
-require_once '../includes/headerCliente.php';
-require_once '../includes/headerView.php';
+require_once '../../includes/headerCliente.php';
+require_once '../../includes/headerView.php';
 require_once '../models/manutencoes.php';
 require_once '../models/veiculo.php';
 
@@ -22,7 +22,6 @@ if (isset($_POST["placa"])) {
     $estado = $resultadoEstado->fetch_assoc();
     $estado_do_veiculo = $estado['estado_do_veiculo'];
 
-    $conn->close();
 } else {
 
     exit;
@@ -43,10 +42,11 @@ if (isset($_POST["placa"])) {
 </head>
 
 <body>
-<?php headerVieW();?>
+
 
     <div class="container-fluid d-flex justify-content-center align-items-center vh-100">
         <div class="col-md-4 border p-4"> <!-- Adicione a classe border e a classe de espaçamento p-4 -->
+            <?php headerVieW();?>
             <label for="placa">Placa do Veículo:
                 <?php echo $_POST["placa"]; ?>
             </label> <br>

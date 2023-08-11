@@ -2,11 +2,12 @@
 session_start();
 
 // Verificar se o usuário está logado como funcionário
-require_once '../includes/headerFuncionario.php';
-require_once '../includes/headerView.php';
+require_once '../../includes/headerFuncionario.php';
+require_once '../../includes/headerView.php';
 require_once '../models/veiculo.php';
 
-$conn = conectarBancoDados();
+$databaseConnection = DatabaseConnection::getInstance();
+$conn = $databaseConnection->getConnection();
 // Função para obter os dados do veículo pelo ID
 
 // Obter os dados do veículo pelo ID passado na URL
@@ -22,7 +23,6 @@ if (isset($_POST["placa"])) {
     $estado = $resultadoEstado->fetch_assoc();
     $estado_do_veiculo = $estado['estado_do_veiculo'];
     
-    $conn->close();
 } else {
     header("Location: listarVeiculos.php");
     exit;
@@ -39,8 +39,9 @@ if (isset($_POST["placa"])) {
 </head>
 
 <body>
-<?php headerVieW();?>
 
+<div class="container-fluid d-flex justify-content-center align-items-center vh-100">
+        <div class="col-md-4 border p-4"><?php headerVieW();?>
     <h2>Entrega de veiculo</h2>
     <?php if ($dadosVeiculo) { ?>
         <form action="../controllers/manutencoesController.php?funcao=finalizarManutencao" method="POST">
@@ -53,15 +54,16 @@ if (isset($_POST["placa"])) {
             <label for="tipo_servico">Serviço: <?php echo $tipoServico ?></label><br>
             <label for="observacoes">Observações: <?php echo $observacoes['observacoes']; ?></label><br>
             <label for="custo">Custo: <?php echo $custo; ?></label><br>
-            <input type="submit" value="Finalizar">
-            <input type="button" value="Voltar" onclick="window.location.href='listarVeiculos.php'">
+            <input type="submit" value="Finalizar"class="fw-medium btn btn-primary">
+            <input type="button" value="Voltar" class="fw-medium btn btn-primary" onclick="window.location.href='listarVeiculos.php'">
 
         </form>
     <?php } else { ?>
         <p>Veículo não encontrado.</p>
     <?php } ?>
 
-
+</div>
+</div>
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js" integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa" crossorigin="anonymous"></script>

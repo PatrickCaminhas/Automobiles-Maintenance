@@ -2,7 +2,7 @@
 
 
 session_start();
-require_once '../includes/headerView.php';
+require_once '../../includes/headerView.php';
 
 
 

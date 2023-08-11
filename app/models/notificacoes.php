@@ -45,7 +45,8 @@ class Notificacoes implements SplObserver
     }
     private function cadastrarNotificacaoAgendamento($mensagem, $usuario_id)
     {
-        $conn = conectarBancoDados();
+        $databaseConnection = DatabaseConnection::getInstance();
+        $conn = $databaseConnection->getConnection();
         // Preparar a declaração SQL para inserção dos dados
         $dataAtual = date("Y-m-d H:i:s");
 
@@ -66,7 +67,8 @@ class Notificacoes implements SplObserver
 
     public function getNotificacoesFromDB($user_id)
     {
-        $conn = conectarBancoDados();
+        $databaseConnection = DatabaseConnection::getInstance();
+        $conn = $databaseConnection->getConnection();
         // Consulta SQL para buscar as notificações associadas ao usuário
         $sql = "SELECT mensagem, data_notificacao FROM notificacoes WHERE usuario_id = $user_id AND lida='0' ORDER BY data_notificacao DESC";
         $result = $conn->query($sql);
@@ -77,7 +79,6 @@ class Notificacoes implements SplObserver
             $notificacoes[] = $notificacao;
         }
 
-        $conn->close();
 
         return $notificacoes;
     }
@@ -85,9 +86,9 @@ class Notificacoes implements SplObserver
     public function limparNotificacoes($user_id)
     {
         $sql_consulta = "UPDATE notificacoes SET lida = 1 WHERE usuario_id = $user_id AND lida = '0'";
-        $conn = conectarBancoDados();
+        $databaseConnection = DatabaseConnection::getInstance();
+        $conn = $databaseConnection->getConnection();
         $conn->query($sql_consulta);
-        $conn->close();
         header("Location: ../views/painel.php");
     }
 }

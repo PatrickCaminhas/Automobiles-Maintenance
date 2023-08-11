@@ -1,6 +1,6 @@
 <?php
-require_once '../helpers/conexao.php';
-require_once '../helpers/validadores.php';
+require_once '../../helpers/conexao.php';
+require_once '../../helpers/validadores.php';
 require_once 'usuarioCliente.php';
 
 class Veiculo
@@ -85,7 +85,8 @@ class Veiculo
 
     public function inserirVeiculo()
     {
-        $conn = conectarBancoDados();
+        $databaseConnection = DatabaseConnection::getInstance();
+        $conn = $databaseConnection->getConnection();
         // Realize a consulta para verificar se a placa já foi cadastrada
         $sql_consulta = "SELECT * FROM veiculos WHERE placa = '$this->placa'";
         $resultado_consulta = $conn->query($sql_consulta);
@@ -93,9 +94,12 @@ class Veiculo
         if ($resultado_consulta->num_rows > 0) {
             echo '<script>alert("Erro: Carro com a placa informada já está cadastrado!"); window.location.href = "../views/cadastroVeiculo.php";</script>';
             echo "Erro ao cadastrar o veículo: " . $conn->error;
-        } else {
+        } else if(validarPlaca($this->placa) == false){
+            echo '<script>alert("Erro: Placa em modelo incorreto! Favor inserir novamente!"); window.location.href = "../views/cadastroVeiculo.php";</script>';
+            echo "Erro ao cadastrar o veículo: " . $conn->error;
+        }else {
             // Realize o cadastro do novo veículo no banco de dados
-            $sql_cadastro = "INSERT INTO veiculos (marca, modelo, ano, placa, proprietario_id, estado_do_veiculo) VALUES ('$this->marca', '$this->modelo', '$this->ano', '$this->placa', '$this->proprietario_id', 'Com proprietario')";
+            $sql_cadastro = "INSERT INTO veiculos (marca, modelo, ano, placa, proprietario_id, estado_do_veiculo) VALUES ('$this->marca', '$this->modelo', '$this->ano', '$this->placa', '$this->proprietario_id', 'Com proprietário')";
             if ($conn->query($sql_cadastro) === TRUE) {
                 echo '<script>alert("Cadastro concluído com sucesso!"); window.location.href = "../views/painel.php";</script>';
                 exit;
@@ -108,7 +112,8 @@ class Veiculo
     public function updateVeiculo()
     {
         // Realiza a consulta para verificar se já existe algum veículo cadastrado com a nova placa
-        $conn = conectarBancoDados();
+        $databaseConnection = DatabaseConnection::getInstance();
+        $conn = $databaseConnection->getConnection();
 
         
         $sql_consulta_placa = "SELECT id FROM veiculos WHERE placa = '$this->placa' AND proprietario_id = '$this->proprietario_id'";
@@ -163,7 +168,6 @@ function selectTodosVeiculos($conn)
         }
     }
 
-    $conn->close();
     return $listaVeiculos;
 }
 
@@ -179,7 +183,6 @@ function selectVeiculoPorPlaca($conn, $placa)
         }
     }
 
-    $conn->close();
     return $listaVeiculos;
 }
 
@@ -211,14 +214,14 @@ function selectVeiculosPorLogin($conn, $login)
     } else {
         echo "Login inválido";
     }
-    $conn->close();
     return $listaVeiculos;
 }*/
 
 function obterListaVeiculos()
 {
-    $conn = conectarBancoDados();
-    $sql = "SELECT p.nome as proprietario_nome, p.telefone as proprietario_telefone,
+    $databaseConnection = DatabaseConnection::getInstance();
+    $conn = $databaseConnection->getConnection();
+$sql = "SELECT p.nome as proprietario_nome, p.telefone as proprietario_telefone,
     v.marca, v.modelo, v.ano, v.placa, v.estado_do_veiculo, m.estado_do_veiculo as estado_manutencao,
     m.data_manutencao, m.previsaoTermino, m.tipo_servico, m.custo, v.proprietario_id
 FROM manutencoes m
@@ -234,12 +237,12 @@ WHERE v.estado_do_veiculo NOT IN ('Com proprietario') AND m.estado_do_veiculo NO
         }
     }
 
-    $conn->close();
     return $listaVeiculos;
 }
 function obterDadosVeiculo($placa)
 {
-    $conn = conectarBancoDados();
+    $databaseConnection = DatabaseConnection::getInstance();
+    $conn = $databaseConnection->getConnection();
 
     $placa_veiculo = mysqli_real_escape_string($conn, $placa);
     $sql = "SELECT v.id as veiculo_id, p.nome as proprietario_nome, p.telefone as proprietario_telefone,
@@ -260,8 +263,9 @@ function obterDadosVeiculo($placa)
 
 function obterObservacoes($placa)
 {
-    $conn = conectarBancoDados();
-    $sql = "SELECT observacoes FROM manutencoes WHERE placa = '$placa' AND id = (SELECT MAX(id) FROM manutencoes WHERE placa = '$placa')";
+    $databaseConnection = DatabaseConnection::getInstance();
+    $conn = $databaseConnection->getConnection();
+$sql = "SELECT observacoes FROM manutencoes WHERE placa = '$placa' AND id = (SELECT MAX(id) FROM manutencoes WHERE placa = '$placa')";
     $result = $conn->query($sql);
     
     // Verifica se há resultados na consulta
@@ -273,13 +277,13 @@ function obterObservacoes($placa)
         $observacoes = array();
     }
 
-    $conn->close();
     return $observacoes;
 }
 
 function obterDataManutencao($placa)
 {
-    $conn = conectarBancoDados();
+    $databaseConnection = DatabaseConnection::getInstance();
+    $conn = $databaseConnection->getConnection();
 
     $placa_veiculo = mysqli_real_escape_string($conn, $placa);
     $sql = "SELECT data_manutencao FROM manutencoes WHERE placa = '$placa_veiculo' AND id = (SELECT MAX(id) FROM manutencoes WHERE placa = '$placa_veiculo')";
@@ -298,7 +302,8 @@ function obterDataManutencao($placa)
 
 function obterDataFinal($placa){
 
-    $conn = conectarBancoDados();
+    $databaseConnection = DatabaseConnection::getInstance();
+    $conn = $databaseConnection->getConnection();
 
     $placa_veiculo = mysqli_real_escape_string($conn, $placa);
     $sql = "SELECT previsaoTermino FROM manutencoes WHERE placa = '$placa_veiculo' AND id = (SELECT MAX(id) FROM manutencoes WHERE placa = '$placa_veiculo')";
@@ -317,7 +322,8 @@ function obterDataFinal($placa){
 
 function obterTipoServico($placa)
 {
-    $conn = conectarBancoDados();
+    $databaseConnection = DatabaseConnection::getInstance();
+    $conn = $databaseConnection->getConnection();
 
     $placa_veiculo = mysqli_real_escape_string($conn, $placa);
     $sql = "SELECT tipo_servico FROM manutencoes WHERE placa = '$placa_veiculo' AND id = (SELECT MAX(id) FROM manutencoes WHERE placa = '$placa_veiculo')";
@@ -336,8 +342,9 @@ function obterTipoServico($placa)
 
 function obterCusto($placa)
 {
-    $conn = conectarBancoDados();
-    $placa_veiculo = mysqli_real_escape_string($conn, $placa);
+    $databaseConnection = DatabaseConnection::getInstance();
+    $conn = $databaseConnection->getConnection();
+$placa_veiculo = mysqli_real_escape_string($conn, $placa);
     $sql = "SELECT custo FROM manutencoes WHERE placa = '$placa_veiculo' AND id = (SELECT MAX(id) FROM manutencoes WHERE placa = '$placa_veiculo')";
     $resultado = $conn->query($sql);
 

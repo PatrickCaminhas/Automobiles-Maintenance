@@ -1,6 +1,6 @@
 <?php
-require_once '../helpers/conexao.php';
-require_once '../helpers/validadores.php';
+require_once '../../helpers/conexao.php';
+require_once '../../helpers/validadores.php';
 require_once '../models/usuarioCliente.php';
 require_once '../models/usuarioFuncionario.php';
 
