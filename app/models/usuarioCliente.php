@@ -4,7 +4,7 @@ require 'usuario.php';
 
 
 
-class Proprietario extends usuario 
+class Proprietario extends usuario
 {
 
     private $id;
@@ -12,18 +12,10 @@ class Proprietario extends usuario
     private $email;
     private $telefone;
     private $senha;
-    private $conn;
 
 
 
-    public function __construct($nome, $email, $telefone, $senha)
-    {
-        parent::__construct($nome, $senha);
-        $this->nome = $nome;
-        $this->email = $email;
-        $this->telefone = $telefone;
-        $this->senha = $senha;
-    }
+
 
     public function getId()
     {
@@ -75,12 +67,26 @@ class Proprietario extends usuario
     {
         $this->senha = $senha;
     }
+    public function paraPascalCase($nome)
+    {
+        $palavras = explode(" ", strtolower($nome));
+        $palavrasEmPascalCase = array_map('ucfirst', $palavras);
+        return implode(" ", $palavrasEmPascalCase);
+    }
 
     public function login($login, $password)
     {
         $databaseConnection = DatabaseConnection::getInstance();
         $conn = $databaseConnection->getConnection();
-        $sql = "SELECT id, nome, email, telefone  FROM proprietarios WHERE (email = '$login' OR telefone = '$login') AND senha = '$password'";
+        $sqlSenhaCriptografada = "SELECT senha FROM proprietarios WHERE email = '$login' OR telefone = '$login'";
+        $resultadoSenhaCriptografada = $conn->query($sqlSenhaCriptografada);
+        $rowSenhaCriptografada = $resultadoSenhaCriptografada->fetch_assoc();
+        $senhaCriptografada = $rowSenhaCriptografada["senha"];
+        $senhaRecebida = sha1($this->senha);
+
+      
+
+        $sql = "SELECT id, nome, email, telefone  FROM proprietarios WHERE (email = '$login' OR telefone = '$login') AND senha = '$senhaRecebida'";
         $result = $conn->query($sql);
 
         if ($result->num_rows == 1) {
@@ -97,7 +103,7 @@ class Proprietario extends usuario
             header("Location: ../views/painel.php");
             exit;
         } else {
-            echo '<script>alert("Login ou senha inválidos. Tente novamente.");window.location.href = "../index.php";</script>';
+            echo '<script>alert("Login ou senha inválidos. Tente novamente.");window.location.href = "../views/index.php";</script>';
         }
 
     }
@@ -117,25 +123,28 @@ class Proprietario extends usuario
         $resultadoTelefone = $conn->query($sqlVerificaTelefone);
         $erro = false;
         if ($resultadoEmail->num_rows > 0) {
-            echo '<script>alert("Este email já está cadastrado. Por favor, escolha outro email");window.location.href = "../cadastro.php";</script>';
+            echo '<script>alert("Este email já está cadastrado. Por favor, escolha outro email");window.location.href = "../views/cadastro.php";</script>';
             $erro = true;
             exit;
         }
 
         if ($resultadoTelefone->num_rows > 0) {
-            echo '<script>alert("Este telefone já está cadastrado. Por favor, escolha outro telefone.");window.location.href = "../cadastro.php";</script>';
+            echo '<script>alert("Este telefone já está cadastrado. Por favor, escolha outro telefone.");window.location.href = "../views/cadastro.php";</script>';
             $erro = true;
             exit;
         }
         if ($erro == false) {
-            $sql = "INSERT INTO proprietarios (nome, email,telefone, senha) VALUES ('$this->nome', '$this->email','$this->telefone', '$this->senha')";
+            $senhaCriptografada = sha1($this->senha);
+            $nomePascalCase = $this->paraPascalCase($this->nome);
+
+            $sql = "INSERT INTO proprietarios (nome, email,telefone, senha) VALUES ('$nomePascalCase', '$this->email','$this->telefone', '$senhaCriptografada')";
             if ($conn->query($sql) === TRUE) {
                 // Notificar os observadores sobre o cadastro concluído
 
 
                 header("Location: ../views/index.php");
             } else {
-                echo '<script>alert("Erro ao cadastrar.");</script>';
+                echo '<script>alert("Erro ao cadastrar.");window.location.href = "../views/cadastro.php";</script>';
                 $erro = true;
                 exit;
             }

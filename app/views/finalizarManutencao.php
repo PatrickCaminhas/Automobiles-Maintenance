@@ -35,6 +35,7 @@ if (isset($_POST["placa"])) {
 <head>
     <title>Atualizar Manutenção - Sistema de Acompanhamento</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <?php headerHead(); ?>
 
 </head>
 
@@ -50,10 +51,10 @@ if (isset($_POST["placa"])) {
             <input type="hidden" name="placa" value="<?php echo $_POST["placa"]; ?>">
             <label for="estado">Estado: <?php echo $estado_do_veiculo; ?> </label><br>
             <input type="hidden" name="data_manutencao" value="<?php echo date("Y-m-d"); ?>">
-            <label for="data_final">No dia: <?php echo date("d-m-Y"); ?></label><br>
+            <label for="data_final">No dia: <?php echo date("d/m/Y"); ?></label><br>
             <label for="tipo_servico">Serviço: <?php echo $tipoServico ?></label><br>
             <label for="observacoes">Observações: <?php echo $observacoes['observacoes']; ?></label><br>
-            <label for="custo">Custo: <?php echo $custo; ?></label><br>
+            <label for="custo">Custo: <?php echo "R$ ".$custo; ?></label><br>
             <input type="submit" value="Finalizar"class="fw-medium btn btn-primary">
             <input type="button" value="Voltar" class="fw-medium btn btn-primary" onclick="window.location.href='listarVeiculos.php'">
 

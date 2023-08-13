@@ -12,22 +12,24 @@ if (isset($_POST["login"]) && isset($_POST["senha"])) {
     if (validarCPF($userLogin)) {
 
         $funcionario = new Funcionario();
-
+        $funcionario->setCpf($userLogin);
+        $funcionario->setSenha($senha);
         $funcionario->login($userLogin, $senha);
     } else if (validarCelular($userLogin)) {
-            $proprietario = new Proprietario('', '', $userLogin, $senha);
+        $proprietario = new Proprietario();
+        $proprietario->setTelefone($userLogin);
+        $proprietario->setSenha($senha);
+        $proprietario->login($userLogin, $senha);
+    } else if (validarEmail($userLogin)) {
 
-            $proprietario->login($userLogin, $senha);
-        }
-        else if (validarEmail($userLogin)) {
-
-            $proprietario = new Proprietario('', $userLogin, '', $senha);
-
-            $proprietario->login($userLogin, $senha);
-        } else {
+        $proprietario = new Proprietario();
+        $proprietario->setEmail($userLogin);
+        $proprietario->setSenha($senha);
+        $proprietario->login($userLogin, $senha);
+    } else {
         echo '<script>alert("Login inválido. Tente novamente.");window.location.href = "../views/index.php";</script>';
 
     }
-    } 
+}
 
 ?>

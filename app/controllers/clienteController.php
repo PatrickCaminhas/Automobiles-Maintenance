@@ -7,8 +7,11 @@ if (isset($_GET["funcao"])) {
     $funcao = $_GET["funcao"];
     switch ($funcao) {
         case "cadastrarCliente":
-            $user = new Proprietario($_POST["nome"], $_POST["email"], $_POST["telefone"], $_POST["senha"]);
-
+            $user = new Proprietario();
+            $user->setNome($_POST["nome"]);
+            $user->setEmail($_POST["email"]);
+            $user->setTelefone($_POST["telefone"]);
+            $user->setSenha($_POST["senha"]);
             $user->cadastrar();
             break;
         // Adicione mais cases para outras funções

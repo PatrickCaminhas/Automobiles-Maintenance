@@ -11,6 +11,7 @@ require_once '../../includes/headerView.php';
     <title>Cadastro de Veículo - Sistema de Acompanhamento</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+        <?php headerHead(); ?>
 
 </head>
 
@@ -24,7 +25,7 @@ require_once '../../includes/headerView.php';
             <form action="../controllers/veiculosController.php?funcao=cadastrarVeiculo" method="post">
 
                 <label for="marca" class="form-label">Marca:</label>
-                <input type="text" list="datalistOptions" class="form-control" id="marca" name="marca" required><br>
+                <input type="text" list="datalistOptions" class="form-control" id="marca" name="marca" required placeholder="Marca do veiculo"><br>
                 <datalist id="datalistOptions">
                     <option value="Chevrolet">
                     <option value="Fiat">
@@ -42,17 +43,17 @@ require_once '../../includes/headerView.php';
 
 
                 <label for="modelo" class="form-label">Modelo:</label>
-                <input type="text" class="form-control" id="modelo" name="modelo" required><br>
+                <input type="text" class="form-control" id="modelo" name="modelo" required placeholder="Modelo do veiculo"><br>
 
 
 
                 <label for="ano" class="form-label">Ano:</label>
-                <input type="number" class="form-control" id="ano" name="ano" required><br>
+                <input type="number" class="form-control" id="ano" name="ano" required placeholder="Ano do veiculo"><br>
 
 
 
                 <label for="placa" class="form-label">Placa:</label>
-                <input type="text" class="form-control" id="placa" name="placa" required><br>
+                <input type="text" class="form-control" id="placa" name="placa" required required placeholder="LLLNLNN" minlength="7" maxlength="7"><br>
 
                 <?php
 

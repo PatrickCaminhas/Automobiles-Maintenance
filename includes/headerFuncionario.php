@@ -1,9 +1,10 @@
 <?php   
 
 require_once '../../helpers/conexao.php';
-$conn = conectarBancoDados();
+$databaseConnection = DatabaseConnection::getInstance();
+$conn = $databaseConnection->getConnection();
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'funcionario') {
-    header("Location: ../app/views/index.php");
+    header("Location: ../views/index.php");
     exit;
 }
 

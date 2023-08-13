@@ -14,26 +14,33 @@ require_once '../../includes/headerView.php';
     <title>Painel do Funcionário - Sistema de Acompanhamento</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+        <?php headerHead(); ?>
 
 </head>
 
 <body>
-<div class="container-fluid d-flex justify-content-between align-items-center" style="margin-top: 1rem;">
-    <?php headerVieW();?>
-  
-    <a href="../controllers/logout.php" class="btn btn-primary mb-1">Logout</a>
-
-     
+    <div class="container-fluid d-flex justify-content-between align-items-center" style="margin-top: 1rem;">
+        <?php headerVieW(); ?>
+        <a href="../controllers/logout.php" class="btn btn-primary mb-1">Logout</a>
     </div>
     <div class="d-flex flex-column justify-content-center align-items-center">
         <div class="col-md-4 border p-4" style="width: 75vw;">
-            <h1>Bem-vindo(a) ao Painel do Funcionário,
+            <h1>Bem-vindo(a) ao painel do funcionário,
                 <?php echo $user_nome; ?>!
             </h1>
             <!-- Aqui você pode implementar as funcionalidades do painel para o funcionário -->
-            <div class="">
-                <a href="listarVeiculos.php" class="fw-medium btn btn-primary mb-3">Alterar estado de veiculos</a> <br>
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-4 ">
+                        <img src="../../images/imagemSuporte-1024x950.png" alt="" class="img-fluid">
+                        <div class ="d-flex flex-column  align-items-center">
+                        <a href="listarVeiculos.php" class="fw-medium btn btn-primary mb-3 my-2">Alterar estado de manutencões</a>
+                        </div>
+                    </div>
+                </div>
             </div>
+
+
         </div>
     </div>
     <!-- Exibir informações específicas para funcionários -->

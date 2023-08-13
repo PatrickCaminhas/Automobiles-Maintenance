@@ -21,11 +21,15 @@ $listaVeiculos = obterListaVeiculos();
 <head>
     <title>Alteração de Estados de Manutenção - Sistema de Acompanhamento</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <?php headerHead(); ?>
 
 </head>
 
 <body>
-<?php headerVieW();?>
+<div class="container-fluid d-flex justify-content-between align-items-center" style="margin-top: 1rem;">
+        <?php headerVieW(); ?>
+        <a href="../controllers/logout.php" class="btn btn-primary mb-1">Logout</a>
+    </div>
 
 
 <div class="d-flex flex-column justify-content-center align-items-center">
@@ -81,16 +85,24 @@ $listaVeiculos = obterListaVeiculos();
 
                 </td>
                 <td>
-                    <?php echo $veiculo['data_manutencao']; ?>
+                    <?php
+                     $dataFormatada  = date_format(date_create($veiculo['data_manutencao']), 'd/m/Y');
+                     echo $dataFormatada;  ?>
                 </td>
                 <td>
-                    <?php echo $veiculo['previsaoTermino']; ?>
+                    <?php
+                    if($veiculo['previsaoTermino'] == "0000-00-00"){
+                        $dataFormatada = "Ainda não definida";
+                    }
+                    else{
+                    $dataFormatada  = date_format(date_create($veiculo['previsaoTermino']), 'd/m/Y');
+                    }
+                    echo $dataFormatada;  ?>
                 </td>
                 <td>
                     <?php echo $veiculo['tipo_servico']; ?>
                 </td>
-                <td>R$
-                    <?php echo $veiculo['custo']; ?>
+                <td><?php echo "R$".$veiculo['custo']; ?>
                 </td>
                 <td>
                     <?php echo $veiculo['estado_manutencao']; ?>
@@ -102,7 +114,7 @@ $listaVeiculos = obterListaVeiculos();
                         $dataHoje = date("Y-m-d");
                            if ($veiculo['estado_manutencao'] == "Manutenção concluída") {
                                echo "'fw-medium btn btn-secondary' disabled";
-                           } else if($veiculo['data_manutencao'] > $dataHoje) {
+                           } else if($veiculo['data_manutencao'] >= $dataHoje) {
                                echo "'fw-medium btn btn-secondary' disabled";
                            }else if($veiculo['estado_manutencao'] == "Entregue ao proprietario"){
                                echo "'fw-medium btn btn-secondary' disabled";
@@ -132,7 +144,9 @@ $listaVeiculos = obterListaVeiculos();
 
         <?php } ?>
     </table>
+    <div class="d-flex flex-column justify-content-center align-items-center">
     <button onclick="window.location.href = 'painelFuncionario.php';" class="fw-medium btn btn-primary">Voltar</button>
+    </div>
     </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>

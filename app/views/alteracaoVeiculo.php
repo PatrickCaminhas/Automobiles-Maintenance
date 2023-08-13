@@ -10,6 +10,7 @@ require_once '../../includes/headerView.php';
 <head>
     <title>Alterar Informações do Veículo - Sistema de Acompanhamento</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <?php headerHead(); ?>
 
 </head>
 
@@ -22,7 +23,7 @@ require_once '../../includes/headerView.php';
     <h2>Alterar Informações do Veículo</h2>
 
     <!-- Select para escolher a placa do veículo -->
-    <label for="placa">Selecione a Placa do Veículo:</label>
+    <label for="placa">Selecione o veiculo:</label>
     <select id="placa" name="placa" class="form-control" required>
         <option value="" data-default disabled selected></option>
         <?php
@@ -40,7 +41,7 @@ require_once '../../includes/headerView.php';
             $selected = ($veiculo_id == $id_veiculo) ? 'selected' : '';
 
             echo "<option value='$placa_veiculo' $selected>$placa_veiculo | $marca | $modelo | $ano</option>";
-        }
+        }   
         ?>
     </select>
 
@@ -52,7 +53,7 @@ require_once '../../includes/headerView.php';
     <!-- Div para exibir as informações do veículo selecionado -->
     <div id="informacoes-veiculo">
         <?php if (isset($marca) && isset($modelo) && isset($ano)) { ?>
-            Informações do Veículo: *******|*******|*******|****
+            Informações do Veículo: 
                 
         <?php } ?>
     </div>
@@ -61,13 +62,13 @@ require_once '../../includes/headerView.php';
     <form action="../controllers/veiculosController.php?funcao=alterarVeiculo" method="post">
         <!-- Os campos "marca", "modelo" e "ano" serão preenchidos automaticamente pelo JavaScript -->
         <label for="marca">Marca:</label>
-        <input type="text" id="marca" name="marca" required class="form-control"><br>
+        <input type="text" id="marca" name="marca" required class="form-control" placeholder="Marca do veiculo"><br>
 
         <label for="modelo">Modelo:</label>
-        <input type="text" id="modelo" name="modelo" required class="form-control"><br>
+        <input type="text" id="modelo" name="modelo" required class="form-control" placeholder="Modelo do veiculo"><br>
 
         <label for="ano">Ano:</label>
-        <input type="number" id="ano" name="ano" required class="form-control"><br>
+        <input type="number" id="ano" name="ano" required class="form-control" placeholder="Ano do veiculo"><br>
 
         <!-- Campo oculto para enviar a placa selecionada -->
         <input type="hidden" name="placa" id="placa-selecionada" value="">

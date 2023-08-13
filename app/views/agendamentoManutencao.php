@@ -10,10 +10,12 @@ require_once '../../includes/headerView.php';
 <head>
     <title>Agendar Manutenção - Sistema de Acompanhamento</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <?php headerHead(); ?>
 
 </head>
 
 <body>
+
 
 
 
@@ -54,8 +56,10 @@ require_once '../../includes/headerView.php';
 
                 echo "<option value='$placa' $selected>$placa | $marca | $modelo | $ano</option>";
             }
+            date_default_timezone_set('America/Sao_Paulo');
+
             ?>
-            ?>
+            
         </select><br>
 
         <label for="data_manutencao">Data da Manutenção:</label>
@@ -71,6 +75,7 @@ require_once '../../includes/headerView.php';
     </form>
 
     <script>
+
         // Obtém a referência ao elemento de data da manutenção
         const dataManutencaoInput = document.getElementById('data_manutencao');
 
@@ -78,8 +83,8 @@ require_once '../../includes/headerView.php';
         const dataAtual = new Date();
 
         // Adiciona um dia à data atual para obter a data mínima permitida
-        dataAtual.setDate(dataAtual.getDate() + 1);
-
+        dataAtual.setDate(dataAtual.getDate());
+       
         // Converte a data mínima para o formato aceito pelo campo de data (AAAA-MM-DD)
         const dataMinima = dataAtual.toISOString().split('T')[0];
 

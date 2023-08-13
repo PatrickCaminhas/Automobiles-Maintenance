@@ -37,8 +37,9 @@ if (isset($_POST["placa"])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+        <?php headerHead(); ?>
 
-    <title>Document</title>
+    <title>Verificar manutenção</title>
 </head>
 
 <body>
@@ -54,10 +55,20 @@ if (isset($_POST["placa"])) {
                 <?php echo $estado_do_veiculo; ?>
             </label><br>
             <label for="data_final">No dia:
-                <?php echo $dataManutencao; ?>
+                <?php 
+                $dataFormatada  = date_format(date_create($dataManutencao), 'd/m/Y');
+                    echo $dataFormatada; ?>
             </label><br>
             <label for="data_final">Previsão de termino:
-                <?php echo $dataFinal; ?>
+                
+                <?php 
+                if($dataFinal == "0000-00-00"){
+                    $dataFormatada = "Ainda não definida";
+                }
+                else{
+                $dataFormatada  = date_format(date_create($dataFinal), 'd/m/Y');
+                }
+                echo $dataFormatada; ?>
             </label><br>
             <label for="tipo_servico">Serviço:
                 <?php echo $tipoServico ?>
@@ -66,7 +77,7 @@ if (isset($_POST["placa"])) {
                 <?php echo $observacoes['observacoes']; ?>
             </label><br>
             <label for="custo">Custo:
-                <?php echo $custo; ?>
+                <?php echo "R$". $custo; ?>
             </label><br>
             <input type="button" value="Voltar" class="btn btn-primary" onclick="window.location.href='painel.php'">
         </div>

@@ -6,7 +6,9 @@ require_once '../models/notificacoes.php';
 $userRole = $_SESSION['user_role'];
 
 $notificacoes = new Notificacoes();
-$manutencao = new Manutencao($_POST["placa"], '', $_POST["data_manutencao"], '', '', '', '');
+$manutencao = new Manutencao();
+$manutencao->setPlaca($_POST["placa"]);
+$manutencao->setDataManutencao($_POST["data_manutencao"]);
 $manutencao->attach($notificacoes);
 
 
@@ -37,8 +39,16 @@ if (isset($_GET["funcao"])) {
             break;
         case "atualizarManutencao":
             if ($userRole == "funcionario") {
+                date_default_timezone_set('America/Sao_Paulo');
                 $dataManutencao = date("Y-m-d");
-                $manutencao = new Manutencao($_POST["placa"], $_POST["estado"], $dataManutencao, $_POST["data_final"], $_POST["tipo_servico"], $_POST["observacoes"], $_POST["custo"]);
+                $manutencao = new Manutencao();
+                $manutencao->setPlaca($_POST["placa"]);
+                $manutencao->setEstadoDoVeiculo($_POST["estado"]);
+                $manutencao->setTipoServico($_POST["tipo_servico"]);
+                $manutencao->setDataManutencao($dataManutencao);
+                $manutencao->setDataManutencao($_POST["data_final"]);
+                $manutencao->setObservacoes($_POST["observacoes"]);
+                $manutencao->setCusto($_POST["custo"]);
                 $manutencao->attach($notificacoes);
                 $manutencao->atualizarManutencao($_POST["placa"]);
 

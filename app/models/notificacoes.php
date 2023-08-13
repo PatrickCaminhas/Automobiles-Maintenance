@@ -12,11 +12,10 @@ class Notificacoes implements SplObserver
     public function update(SplSubject $subject): void
     {
         if ($subject instanceof Manutencao) {
-            if ($this->acao == "agendar"){
-            $mensagem = "Agendamento de manutenção realizado para o veículo de placa: " . $subject->getPlaca();
-            echo '<script>alert("Agendamento de manutenção concluida!"); </script>';
-        }
-            else if ($this->acao == "cancelar") {
+            if ($this->acao == "agendar") {
+                $mensagem = "Agendamento de manutenção realizado para o veículo de placa: " . $subject->getPlaca();
+                echo '<script>alert("Agendamento de manutenção concluida!"); </script>';
+            } else if ($this->acao == "cancelar") {
                 $mensagem = "Cancelamento de agendamento de manutenção realizado para o veículo de placa: " . $subject->getPlaca();
                 echo '<script>alert("Agendamento de manutenção cancelada!"); </script>';
 
@@ -48,11 +47,17 @@ class Notificacoes implements SplObserver
         $databaseConnection = DatabaseConnection::getInstance();
         $conn = $databaseConnection->getConnection();
         // Preparar a declaração SQL para inserção dos dados
+        date_default_timezone_set('America/Sao_Paulo');
+
         $dataAtual = date("Y-m-d H:i:s");
 
         $id_proprietario = $_SESSION['id_cliente'];
+        $placa = $this->extrairPlacaDaMensagem($mensagem);
+        $manutencao = new Manutencao();
+        $manutencao->setPlaca($placa);
+        $idManutencao = $manutencao->getIdUltimaManutencao($placa);
 
-        $sql = "INSERT INTO notificacoes (mensagem, data_notificacao, lida, usuario_id) VALUES ('$mensagem', '$dataAtual', 0, '$id_proprietario')";
+        $sql = "INSERT INTO notificacoes (mensagem, data_notificacao, lida, usuario_id, manutencaoId) VALUES ('$mensagem', '$dataAtual', 0, '$id_proprietario', '$idManutencao')";
 
         $conn->query($sql);
 
@@ -75,7 +80,9 @@ class Notificacoes implements SplObserver
 
         $notificacoes = array();
         while ($row = $result->fetch_assoc()) {
-            $notificacao = $row["mensagem"] . " - " . $row["data_notificacao"];
+            $dataFormatada  = date_format(date_create($row["data_notificacao"]), 'd/m/Y H:i:s');
+
+            $notificacao = $row["mensagem"] . " - " . $dataFormatada;
             $notificacoes[] = $notificacao;
         }
 
@@ -90,6 +97,12 @@ class Notificacoes implements SplObserver
         $conn = $databaseConnection->getConnection();
         $conn->query($sql_consulta);
         header("Location: ../views/painel.php");
+    }
+
+    function extrairPlacaDaMensagem($texto)
+    {
+        $ultimosCaracteres = substr($texto, -7);
+        return $ultimosCaracteres;
     }
 }
 ?>

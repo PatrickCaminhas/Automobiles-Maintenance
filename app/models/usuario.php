@@ -4,10 +4,9 @@ class Usuario
     private $nome;
     private $senha;
 
-    public function __construct($nome, $senha)
+    public function __construct()
     {
-        $this->nome = $nome;
-        $this->senha = $senha;
+     
     }
 
     public function getNome()

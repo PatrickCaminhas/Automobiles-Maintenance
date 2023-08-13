@@ -16,16 +16,9 @@ class Manutencao implements SplSubject
     private $acao;
 
 
-    public function __construct($placa, $estado_do_veiculo, $dataManutencao, $dataTermino, $tipo_servico, $observacoes, $custo)
+    public function __construct()
     {
 
-        $this->placa = $placa;
-        $this->estado_do_veiculo = $estado_do_veiculo;
-        $this->dataManutencao = $dataManutencao;
-        $this->dataTermino = $dataTermino;
-        $this->tipo_servico = $tipo_servico;
-        $this->observacoes = $observacoes;
-        $this->custo = $custo;
     }
 
     public function attach(SplObserver $observer): void
@@ -95,8 +88,17 @@ class Manutencao implements SplSubject
         $result = $conn->query($sql);
         $estado = $result->fetch_assoc();
         $estado_da_manutencao = $estado['estado_do_veiculo'];
-        $conn->close();
         return $estado_da_manutencao;
+    }
+
+    public function getIdUltimaManutencao($placa){
+        $databaseConnection = DatabaseConnection::getInstance();
+        $conn = $databaseConnection->getConnection();
+        $sql = "SELECT id FROM manutencoes WHERE placa = '$placa' AND id = (SELECT MAX(id) FROM manutencoes WHERE placa = '$placa')";
+        $result = $conn->query($sql);
+        $id = $result->fetch_assoc();
+        $id_da_manutencao = $id['id'];
+        return $id_da_manutencao;
     }
 
     public function setEstadoDoVeiculo($estado_do_veiculo)
@@ -142,7 +144,6 @@ class Manutencao implements SplSubject
         $result = $conn->query($sql);
         $estado = $result->fetch_assoc();
         $observacao_da_manutencao = $estado['observacao'];
-        $conn->close();
         return $observacao_da_manutencao;
     }
 
@@ -195,7 +196,6 @@ class Manutencao implements SplSubject
             $this->setAcao("agendar");
             $this->notify();
 
-            $conn->close();
             header("Location: ../views/painel.php");
 
         }
@@ -242,8 +242,6 @@ class Manutencao implements SplSubject
                 echo '<script>alert("Não foi encontrado nenhum agendamento para o veículo."); window.location.href = "../views/painel.php";</script>';
             }
 
-            // Fechar a conexão com o banco de dados
-            $conn->close();
         }
 
     }
@@ -293,8 +291,7 @@ class Manutencao implements SplSubject
 
             }
 
-            // Fechar a conexão com o banco de dados
-            $conn->close();
+
         }
 
     }
@@ -353,7 +350,6 @@ public function atualizarManutencao($placa)
             echo '<script>alert("Falha ao atualizar o agendamento de manutenção!\nContate o suporte"); window.location.href = "../views/listarVeiculos.php";</script>';
         }
 
-        $conn->close();
     }
 }
 }

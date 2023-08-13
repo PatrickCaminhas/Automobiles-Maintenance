@@ -3,10 +3,7 @@
 
 session_start();
 require_once '../../includes/headerView.php';
-
-
-
-require_once '../helpers/conexao.php';
+require_once '../../helpers/conexao.php';
 if (isset($_SESSION['user_id'])) {
     if ($_SESSION['user_role'] === 'proprietario') {
         header("Location: painel.php");
@@ -22,6 +19,7 @@ if (isset($_SESSION['user_id'])) {
 <head>
     <title>Cadastro - Sistema de Acompanhamento</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <?php headerHead(); ?>
 
 </head>
 <body>
@@ -29,7 +27,7 @@ if (isset($_SESSION['user_id'])) {
         <div class="col-md-4 border p-4">
     <?php headerVieW();?>
     <h2>Cadastro</h2>
-    <form action="./funcoes/usuarioCliente.php?funcao=cadastrar" method="post">
+    <form action="../controllers/clienteController.php?funcao=cadastrarCliente" method="post">
         <label for="nome">Nome:</label>
         <input type="text" id="nome" name="nome" required placeholder="Seu nome" class="form-control"><br>
 
@@ -37,10 +35,10 @@ if (isset($_SESSION['user_id'])) {
         <input type="email" id="email" name="email" required placeholder="Seu email" class="form-control"><br>
 
         <label for="telefone">Telefone:</label>
-        <input type="tel" id="telefone" name="telefone" required placeholder="Seu telefone celular" class="form-control"><br>
+        <input type="tel" id="telefone" name="telefone" required placeholder="Seu telefone celular" class="form-control" minlength="11" maxlength="11"><br>
 
         <label for="senha">Senha:</label>
-        <input type="password" id="senha" name="senha" required placeholder="Sua senha" class="form-control"><br>
+        <input type="password" id="senha" name="senha" required placeholder="Mínimo 6 e máximo 15 caracteres" class="form-control" minlength="6" maxlength="15"><br>
 
         <input type="submit" value="Cadastrar" class="fw-medium btn btn-primary mb-3">
         <input type="button" value="Voltar" class="fw-medium btn btn-primary mb-3" onclick="window.location.href='index.php'">
