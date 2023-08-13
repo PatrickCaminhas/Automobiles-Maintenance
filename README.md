@@ -2,11 +2,11 @@
 ## About / Sobre
 ### English
 
-Practical work for the discipline of Software Engineering II at the Universidade Federal de Ouro Preto. This work aims to develop a software project, including requirements specification, architecture design, implementation and testing.
+Practical work of the Software Engineering II course at the Federal University of Ouro Preto. This work aims to develop a software project without the use of frameworks, including requirements specification, architecture design, implementation and testing.
 
 ### Português
 
-Trabalho prático da disciplina de Engenharia de Software II da Universidade Federal de Ouro Preto. Este trabalho tem como objetivo o desenvolvimento de um projeto de software, incluindo especificação de requisitos, projeto de arquitetura, implementação e testes.
+Trabalho prático da disciplina de Engenharia de Software II da Universidade Federal de Ouro Preto. Este trabalho tem como objetivo o desenvolvimento de um projeto de software sem uso de frameworks, incluindo especificação de requisitos, projeto de arquitetura, implementação e testes.
 ## Languages and technologies / Linguagens e tecnologias
 ### English
 
