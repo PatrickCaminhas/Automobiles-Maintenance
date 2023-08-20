@@ -1,5 +1,7 @@
 <?php
-require_once '../../helpers/conexao.php';
+use helpers\DatabaseConnection;
+
+require_once '../../helpers/DatabaseConnection.php';
 require_once 'usuario.php';
 class Funcionario extends Usuario
 {
@@ -46,7 +48,7 @@ class Funcionario extends Usuario
         $this->senha = trim($senha);
     }
 
-    
+
 
     public function login($login, $password)
     {
@@ -60,7 +62,7 @@ class Funcionario extends Usuario
         $senhaCriptografada = $rowSenhaCriptografada["senha"];
         $senhaRecebida = sha1($password);
 
-       
+
         $sql = "SELECT id, nome FROM usuarios WHERE cpf = '$login' AND senha = '$senhaRecebida'";
         $result = $conn->query($sql);
 

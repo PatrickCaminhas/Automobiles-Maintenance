@@ -1,7 +1,9 @@
 <?php
 
 session_start();
-require_once '../models/notificacoes.php';
+use app\models\Notificacoes;
+
+require_once '../models/Notificacoes.php';
 
 
 if (isset($_GET["funcao"])) {
@@ -11,7 +13,6 @@ if (isset($_GET["funcao"])) {
             $notificacoes = new Notificacoes();
             $notificacoes->limparNotificacoes($_SESSION["user_id"]);
             break;
-        // Adicione mais cases para outras funções
         default:
             // Função não encontrada
             echo "Função não encontrada.";

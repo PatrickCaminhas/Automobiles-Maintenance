@@ -11,7 +11,7 @@ require_once '../../includes/headerView.php';
     <title>Cadastro de Veículo - Sistema de Acompanhamento</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
-        <?php headerHead(); ?>
+    <?php headerHead(); ?>
 
 </head>
 
@@ -25,7 +25,8 @@ require_once '../../includes/headerView.php';
             <form action="../controllers/veiculosController.php?funcao=cadastrarVeiculo" method="post">
 
                 <label for="marca" class="form-label">Marca:</label>
-                <input type="text" list="datalistOptions" class="form-control" id="marca" name="marca" required placeholder="Marca do veiculo"><br>
+                <input type="text" list="datalistOptions" class="form-control" id="marca" name="marca" required
+                    placeholder="Marca do veiculo"><br>
                 <datalist id="datalistOptions">
                     <option value="Chevrolet">
                     <option value="Fiat">
@@ -38,76 +39,40 @@ require_once '../../includes/headerView.php';
                     <option value="Tesla">
                     <option value="Toyota">
                     <option value="Volkswagen">
-                    
+
                 </datalist>
 
 
                 <label for="modelo" class="form-label">Modelo:</label>
-                <input type="text" class="form-control" id="modelo" name="modelo" required placeholder="Modelo do veiculo"><br>
+                <input type="text" class="form-control" id="modelo" name="modelo" required
+                    placeholder="Modelo do veiculo"><br>
 
 
 
                 <label for="ano" class="form-label">Ano:</label>
-                <input type="number" class="form-control" id="ano" name="ano" required placeholder="Ano do veiculo"><br>
+                <!--<input type="number" class="form-control" id="ano" name="ano" required placeholder="Ano do veiculo"><br>*-->
+                <?php
 
+                // Loop para criar os selects dos números do ano
+                
+                echo '<select type="number" class="form-control" name="ano" placeholder="Ano do veiculo" required>';
+                
+                for ($ano = 2023; $ano >= 1990; $ano--) {
+                    
+                    echo "<option value='$ano'>$ano</option>";
+                }
+                echo '</select>';
+
+
+                ?>  
+                <br>
 
 
                 <label for="placa" class="form-label">Placa:</label>
-                <input type="text" class="form-control" id="placa" name="placa" required required placeholder="LLLNLNN" minlength="7" maxlength="7"><br>
+                <input type="text" class="form-control" id="placa" name="placa" required required placeholder="LLLNLNN"
+                    minlength="7" maxlength="7"><br>
 
-                <?php
 
-                /*
-                        // Loop para criar os selects das letras da placa
-                        echo '<select name="placa_letra1" required>';
-                        for ($i = 65; $i <= 90; $i++) {
-                            $letra = chr($i);
-                            echo "<option value='$letra'>$letra</option>";
-                        }
-                        echo '</select>';
-
-                        // Loop para criar os selects dos números da placa
-                        
-                        echo '<select name="placa_letra2" required>';
-                        for ($i = 65; $i <= 90; $i++) {
-                            $letra = chr($i);
-                            echo "<option value='$letra'>$letra</option>";
-                        }
-                        echo '</select>';
-
-                        echo '<select name="placa_letra3" required>';
-                        for ($i = 65; $i <= 90; $i++) {
-                            $letra = chr($i);
-                            echo "<option value='$letra'>$letra</option>";
-                        }
-                        echo '</select>';
-
-                        echo '<select name="placa_numero1" required>';
-                        for ($i = 0; $i <= 9; $i++) {
-                            echo "<option value='$i'>$i</option>";
-                        }
-                        echo '</select>';
-
-                        echo '<select name="placa_letra4" required>';
-                        for ($i = 65; $i <= 90; $i++) {
-                            $letra = chr($i);
-                            echo "<option value='$letra'>$letra</option>";
-                        }
-                        echo '</select>';
-
-                        echo '<select name="placa_numero2" required>';
-                        for ($i = 0; $i <= 9; $i++) {
-                            echo "<option value='$i'>$i</option>";
-                        }
-                        echo '</select>';
-
-                        echo '<select name="placa_numero3" required>';
-                        for ($i = 0; $i <= 9; $i++) {
-                            echo "<option value='$i'>$i</option>";
-                        }
-                        echo '</select>';
-                        */
-                ?>
                 <br>
 
                 <!-- Campo oculto para enviar o ID do proprietário -->

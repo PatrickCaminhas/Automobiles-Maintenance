@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../../helpers/conexao.php';
+use helpers\DatabaseConnection;
 require_once '../../includes/headerCliente.php';
 require_once '../../includes/headerView.php';
 
@@ -13,7 +13,7 @@ require_once '../../includes/headerView.php';
     <title>Agendar Manutenção - Sistema de Acompanhamento</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
-        <?php headerHead(); ?>
+    <?php headerHead(); ?>
 
 </head>
 
@@ -22,8 +22,8 @@ require_once '../../includes/headerView.php';
 
     <div class="container-fluid d-flex justify-content-center align-items-center vh-100">
         <div class="col-md-4 border p-4"> <!-- Adicione a classe border e a classe de espaçamento p-4 -->
-        <?php headerVieW();?>    
-        <h2>Cancelamento de entrega</h2>
+            <?php headerVieW(); ?>
+            <h2>Cancelamento de entrega</h2>
             <?php
             $sql_consulta_placas = "SELECT id, placa, marca, modelo, ano FROM veiculos WHERE proprietario_id = $user_id AND estado_do_veiculo LIKE 'Entrega agendada para o dia:%'";
             $resultado_placas = $conn->query($sql_consulta_placas);

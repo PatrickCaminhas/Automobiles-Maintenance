@@ -3,7 +3,9 @@ session_start();
 
 require_once '../../includes/headerCliente.php';
 require_once '../../includes/headerView.php';
-require_once '../models/manutencoes.php';
+use app\models\Veiculo;
+use app\models\Manutencao;
+require_once '../models/Manutencao.php';
 require_once '../models/veiculo.php';
 
 
@@ -11,12 +13,14 @@ require_once '../models/veiculo.php';
 
 if (isset($_POST["placa"])) {
     $placa_veiculo = $_POST["placa"];
-    $dadosVeiculo = obterDadosVeiculo($placa_veiculo);
-    $observacoes = obterObservacoes($placa_veiculo);
-    $dataManutencao = obterDataManutencao($placa_veiculo);
-    $dataFinal = obterDataFinal($placa_veiculo);
-    $tipoServico = obterTipoServico($placa_veiculo);
-    $custo = obterCusto($placa_veiculo);
+    $veiculo = new Veiculo("", "", "", "", "", "");
+    $dadosVeiculo = $veiculo->obterDadosVeiculo($placa_veiculo);
+
+    $observacoes = $veiculo->obterObservacoes($placa_veiculo);
+    $dataManutencao = $veiculo->obterDataManutencao($placa_veiculo);
+    $dataFinal = $veiculo->obterDataFinal($placa_veiculo);
+    $tipoServico = $veiculo->obterTipoServico($placa_veiculo);
+    $custo = $veiculo->obterCusto($placa_veiculo);
     $sqlEstado = "SELECT estado_do_veiculo FROM veiculos WHERE placa = '$placa_veiculo'";
     $resultadoEstado = $conn->query($sqlEstado);
     $estado = $resultadoEstado->fetch_assoc();
@@ -37,7 +41,7 @@ if (isset($_POST["placa"])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
-        <?php headerHead(); ?>
+    <?php headerHead(); ?>
 
     <title>Verificar manutenção</title>
 </head>
@@ -47,7 +51,7 @@ if (isset($_POST["placa"])) {
 
     <div class="container-fluid d-flex justify-content-center align-items-center vh-100">
         <div class="col-md-4 border p-4"> <!-- Adicione a classe border e a classe de espaçamento p-4 -->
-            <?php headerVieW();?>
+            <?php headerVieW(); ?>
             <label for="placa">Placa do Veículo:
                 <?php echo $_POST["placa"]; ?>
             </label> <br>
@@ -55,18 +59,17 @@ if (isset($_POST["placa"])) {
                 <?php echo $estado_do_veiculo; ?>
             </label><br>
             <label for="data_final">No dia:
-                <?php 
-                $dataFormatada  = date_format(date_create($dataManutencao), 'd/m/Y');
-                    echo $dataFormatada; ?>
+                <?php
+                $dataFormatada = date_format(date_create($dataManutencao), 'd/m/Y');
+                echo $dataFormatada; ?>
             </label><br>
             <label for="data_final">Previsão de termino:
-                
-                <?php 
-                if($dataFinal == "0000-00-00"){
+
+                <?php
+                if ($dataFinal == "0000-00-00") {
                     $dataFormatada = "Ainda não definida";
-                }
-                else{
-                $dataFormatada  = date_format(date_create($dataFinal), 'd/m/Y');
+                } else {
+                    $dataFormatada = date_format(date_create($dataFinal), 'd/m/Y');
                 }
                 echo $dataFormatada; ?>
             </label><br>
@@ -77,7 +80,7 @@ if (isset($_POST["placa"])) {
                 <?php echo $observacoes['observacoes']; ?>
             </label><br>
             <label for="custo">Custo:
-                <?php echo "R$". $custo; ?>
+                <?php echo "R$" . $custo; ?>
             </label><br>
             <input type="button" value="Voltar" class="btn btn-primary" onclick="window.location.href='painel.php'">
         </div>

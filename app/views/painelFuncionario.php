@@ -3,7 +3,7 @@ session_start();
 
 require_once '../../includes/headerFuncionario.php';
 require_once '../../includes/headerView.php';
-
+use helpers\DatabaseConnection;
 
 ?>
 
@@ -14,7 +14,7 @@ require_once '../../includes/headerView.php';
     <title>Painel do Funcionário - Sistema de Acompanhamento</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
-        <?php headerHead(); ?>
+    <?php headerHead(); ?>
 
 </head>
 
@@ -33,8 +33,9 @@ require_once '../../includes/headerView.php';
                 <div class="row justify-content-center">
                     <div class="col-md-4 ">
                         <img src="../../images/imagemSuporte-1024x950.png" alt="" class="img-fluid">
-                        <div class ="d-flex flex-column  align-items-center">
-                        <a href="listarVeiculos.php" class="fw-medium btn btn-primary mb-3 my-2">Alterar estado de manutencões</a>
+                        <div class="d-flex flex-column  align-items-center">
+                            <a href="listarVeiculos.php" class="fw-medium btn btn-primary mb-3 my-2">Alterar estado de
+                                manutencões</a>
                         </div>
                     </div>
                 </div>

@@ -4,11 +4,12 @@ session_start();
 // Verificar se o usuário está logado como funcionário
 require_once '../../includes/headerFuncionario.php';
 require_once '../../includes/headerView.php';
-require_once '../models/veiculo.php';
+use app\models\Veiculo;
+
 // Função para obter a lista de veículos com estados diferentes de "Com proprietário" e "Disponível para retirada"
 
-
-$listaVeiculos = obterListaVeiculos();
+$veiculo = new Veiculo("","","","","","");
+$listaVeiculos = $veiculo->obterListaVeiculos();
 
 
 
@@ -114,7 +115,7 @@ $listaVeiculos = obterListaVeiculos();
                         $dataHoje = date("Y-m-d");
                            if ($veiculo['estado_manutencao'] == "Manutenção concluída") {
                                echo "'fw-medium btn btn-secondary' disabled";
-                           } else if($veiculo['data_manutencao'] >= $dataHoje) {
+                           } else if($veiculo['data_manutencao'] > $dataHoje) {
                                echo "'fw-medium btn btn-secondary' disabled";
                            }else if($veiculo['estado_manutencao'] == "Entregue ao proprietario"){
                                echo "'fw-medium btn btn-secondary' disabled";

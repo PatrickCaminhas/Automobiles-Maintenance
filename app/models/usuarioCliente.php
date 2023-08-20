@@ -1,5 +1,11 @@
 <?php
-require_once '../../helpers/conexao.php';
+use helpers\DatabaseConnection;
+
+require_once "../../helpers/DatabaseConnection.php";
+use helpers\Validador;
+
+require_once "../../helpers/Validador.php";
+
 require 'usuario.php';
 
 
@@ -84,7 +90,7 @@ class Proprietario extends usuario
         $senhaCriptografada = $rowSenhaCriptografada["senha"];
         $senhaRecebida = sha1($this->senha);
 
-      
+
 
         $sql = "SELECT id, nome, email, telefone  FROM proprietarios WHERE (email = '$login' OR telefone = '$login') AND senha = '$senhaRecebida'";
         $result = $conn->query($sql);
@@ -122,6 +128,7 @@ class Proprietario extends usuario
         $resultadoEmail = $conn->query($sqlVerificaEmail);
         $resultadoTelefone = $conn->query($sqlVerificaTelefone);
         $erro = false;
+        $validador = new Validador;
         if ($resultadoEmail->num_rows > 0) {
             echo '<script>alert("Este email já está cadastrado. Por favor, escolha outro email");window.location.href = "../views/cadastro.php";</script>';
             $erro = true;
@@ -134,17 +141,24 @@ class Proprietario extends usuario
             exit;
         }
         if ($erro == false) {
+
             $senhaCriptografada = sha1($this->senha);
             $nomePascalCase = $this->paraPascalCase($this->nome);
 
             $sql = "INSERT INTO proprietarios (nome, email,telefone, senha) VALUES ('$nomePascalCase', '$this->email','$this->telefone', '$senhaCriptografada')";
-            if ($conn->query($sql) === TRUE) {
-                // Notificar os observadores sobre o cadastro concluído
+            if ($validador->validarCelular($this->telefone) && $validador->validarEmail($this->email)) {
+                if ($conn->query($sql) === TRUE) {
+                    // Notificar os observadores sobre o cadastro concluído
 
 
-                header("Location: ../views/index.php");
+                    header("Location: ../views/index.php");
+                } else {
+                    echo '<script>alert("Erro ao cadastrar.");window.location.href = "../views/cadastro.php";</script>';
+                    $erro = true;
+                    exit;
+                }
             } else {
-                echo '<script>alert("Erro ao cadastrar.");window.location.href = "../views/cadastro.php";</script>';
+                echo '<script>alert("Email ou telefone em formato invalido, favor verificar! .");window.location.href = "../views/cadastro.php";</script>';
                 $erro = true;
                 exit;
             }

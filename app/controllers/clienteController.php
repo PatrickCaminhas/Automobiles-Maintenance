@@ -1,6 +1,6 @@
 <?php
-require_once '../../helpers/conexao.php';
-require_once '../../helpers/validadores.php';
+use helpers\DatabaseConnection;
+use helpers\Validador;
 require_once '../models/usuarioCliente.php';
 
 if (isset($_GET["funcao"])) {
@@ -14,7 +14,7 @@ if (isset($_GET["funcao"])) {
             $user->setSenha($_POST["senha"]);
             $user->cadastrar();
             break;
-        // Adicione mais cases para outras funções
+        // Futuramente função de exclusão de conta do cliente
         default:
             // Função não encontrada
             echo "Função não encontrada.";

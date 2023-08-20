@@ -1,4 +1,4 @@
-<?php   
+<?php
 class Usuario
 {
     private $nome;
@@ -6,7 +6,7 @@ class Usuario
 
     public function __construct()
     {
-     
+
     }
 
     public function getNome()

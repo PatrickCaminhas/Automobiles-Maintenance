@@ -1,5 +1,14 @@
 <?php
-require_once 'manutencoes.php';
+namespace app\models;
+
+use app\models\Manutencao;
+use helpers\DatabaseConnection;
+use SplObserver;
+use SplSubject;
+
+require_once '../../helpers/DatabaseConnection.php';
+
+
 class Notificacoes implements SplObserver
 {
     private $acao;
@@ -80,7 +89,7 @@ class Notificacoes implements SplObserver
 
         $notificacoes = array();
         while ($row = $result->fetch_assoc()) {
-            $dataFormatada  = date_format(date_create($row["data_notificacao"]), 'd/m/Y H:i:s');
+            $dataFormatada = date_format(date_create($row["data_notificacao"]), 'd/m/Y H:i:s');
 
             $notificacao = $row["mensagem"] . " - " . $dataFormatada;
             $notificacoes[] = $notificacao;
